@@ -1,0 +1,5 @@
+.idea/
+venv/
+build/
+__pycache__
+fmi-weather.iml

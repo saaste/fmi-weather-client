@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport xmlns="http://www.opengis.net/ows/1.1"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd"
+                 version="2.0.0" xml:lang="eng">
+    <Exception exceptionCode="OperationParsingFailed">
+        <ExceptionText>No locations found for the place with the requested language!</ExceptionText>
+        <ExceptionText>URI: /wfs?parameters=temperature%2Cwindspeedms%2Crh%2Ctd%2Cri_10min%2Cp_sea%2Cvis%2Cn_man&amp;place=Helsinkizxc&amp;request=GetFeature&amp;service=WFS&amp;starttime=2020-01-31T19%3A46%3A00Z&amp;storedquery_id=fmi%3A%3Aobservations%3A%3Aweather%3A%3Atimevaluepair&amp;timestep=10&amp;version=2.0.0</ExceptionText>
+    </Exception>
+</ExceptionReport>
