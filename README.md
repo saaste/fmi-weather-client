@@ -9,52 +9,55 @@ Library is not yet available in [PyPi](https://pypi.org/).
 
 ## How to use
 
-Working example can be found in [example.py](example.py).
+Working example can be found in [example.py](example.py). If there is a problem parsing the response or FMI service
+returns an exception response, an exception is throws. It is up to the caller to handle the exceptions.
 
-##### Get closest weather station
+#### Get the weather using a place name
+
+Selected station depends on FMI service but in general it should be the closest one and provide the latest measurements.
 ```python
 import fmi_weather
 
-closest_station = fmi_weather.get_closest_station(60.22, 24.83)
+weather = fmi_weather.weather_by_place_name("Mäkkylä, Espoo")
 ```
 
-##### Get weather using a place name
+#### Get the weather using coordinates
 
-Selected station depends on FMI service but it should be the closest.
-```python
-import fmi_weather
-
-weather = fmi_weather.get_weather_by_place(place='Leppävaara, Espoo')
-```
-
-##### Get weather using a station ID
+FMI does not provide an easy way to get the the closest weather station by coordinates. A bounding box is used instead
+since FMI returns all weather stations inside the box. The closest one to coordinates is selected, but
+currently there is no check verifying what kind of station it is.
 
 ```python
 import fmi_weather
 
-closest_station = fmi_weather.get_closest_station(60.22, 24.83)
-weather = fmi_weather.get_weather_by_station(station_id=closest_station.id)
+weather = fmi_weather.weather_by_coordinates(63.361604, 27.392607)
 ```
 
-##### Station information
-The library uses only automated weather stations and ignores other station types. The following fields are available
-if FMI provides them: 
-- Name
-- Region
-- Country
-- Latitude
-- Longitude
-
-##### Weather
-Depending on the weather station the following fields are available
+#### Weather data
+Depending on the weather station the following information is available:
+- Station name
+- Station latitude
+- Station longitude
+- Measurement time
 - Temperature (°C)
-- Wind (m/s)
 - Humidity (%)
+- Wind speed (m/s)
+- Wind gust (m/s)
+- Wind direction (°)
 - Dew point (°C)
-- Precipitation (mm/h)
+- Precipitation amount (mm)
+- Precipitation intensity (mm/h)
 - Pressure (hPa)
-- Visibility (km)
+- Visibility (m)
 - Cloud coverage (1/8)
+
+Measurement data contains two fields: `value` and `unit`. You can also just print the measurement object to get a string
+representation:
+```python
+print('Temperature: %s' % weather.temperature)
+
+# Output: Temperature: 1.4 °C
+```
 
 
 ## Development

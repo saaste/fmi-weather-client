@@ -1,132 +1,236 @@
 import math
 import sys
 from datetime import datetime
+from typing import Optional
+
+import xmltodict
 
 import fmi_weather.models as models
 
+default_params = {
+    'service': 'WFS',
+    'version': '2.0.0',
+    'request': 'getFeature',
+    'storedquery_id': 'fmi::observations::weather::multipointcoverage',
+    'timestep': '10'
+}
 
-def try_get_station(station_data):
-    name = station_data['gml:Point']['gml:name']
-    position = station_data['gml:Point']['gml:pos'].split(' ', 1)
-    key = station_data['gml:Point']['gml:pos']
-    return {
-        key: {
-            'name': name,
-            'position': {
-                'lat': position[0],
-                'lon': position[1]
-            },
-            'measurements': []
-        }
-    }
+default_exception = Exception('No weather data available')
 
 
 def try_get_stations(data):
-    stations = {}
-    stations_dict = data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']['om:featureOfInterest']['sams:SF_SpatialSamplingFeature']['sams:shape']['gml:MultiPoint']['gml:pointMember']
+    """
+    Try to get station data from the response. When call is made with place name, there is only one
+    station available. For coordinate search there might be more.
+    :param data: Response data from FMI as xmltodict object
+    :return: List of stations
+    """
+
+    def parse_station_data(station_data):
+        name = station_data['gml:Point']['gml:name']
+        position = station_data['gml:Point']['gml:pos'].split(' ', 1)
+        return {
+            'name': name,
+            'lon': float(position[0]),
+            'lat': float(position[1])
+        }
+
+    stations = []
+
+    try:
+        stations_dict = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']
+                         ['om:featureOfInterest']['sams:SF_SpatialSamplingFeature']['sams:shape']['gml:MultiPoint']
+                         ['gml:pointMember'])
+    except KeyError:
+        # This happens when bounding box does not contain any stations.
+        # Shouldn't really happen as long as original coordinates are in Finland
+        raise default_exception
+
+    # xmltodict can return a list or an object depending on how many child the element has
     if isinstance(stations_dict, list):
         for station_dict in stations_dict:
-            station = try_get_station(station_dict)
-            stations.update(station)
+            station = parse_station_data(station_dict)
+            stations.append(station)
     else:
-        stations.update(try_get_station(stations_dict))
+        stations.append(parse_station_data(stations_dict))
+
     return stations
 
 
-def try_get_measurement_value_types(data):
+def try_get_available_measurement_types(data):
+    """
+    Try to get available measurement types (temperature, pressure etc) from the response. Available types depends
+    on the matched stations.
+    :param data: Response data from FMI as xmltodict object
+    :return: List of measurement types
+    """
     measurement_types = []
-    measurement_types_dicts = data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']['om:result']['gmlcov:MultiPointCoverage']['gmlcov:rangeType']['swe:DataRecord']['swe:field']
+    measurement_types_dicts = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']['om:result']
+                               ['gmlcov:MultiPointCoverage']['gmlcov:rangeType']['swe:DataRecord']['swe:field'])
     for measurement_type_dict in measurement_types_dicts:
         measurement_types.append(measurement_type_dict['@name'])
     return measurement_types
 
 
-def try_get_measurement_times(data):
+def try_get_measurements(data):
+    """
+    Try to get available measurements and values
+    :param data: Response data from FMI as xmltodict object
+    :return: List of measurement values
+    """
+    def contains_valid_values(vals):
+        # Temperature is a must have
+        if math.isnan(vals['t2m']):
+            return False
+
+        for k, v in vals.items():
+            if not math.isnan(v):
+                return True
+        return False
+
+    measurement_types = try_get_available_measurement_types(data)
+
+    # Get measurement times and values for matching. They are different elements in XML but the amount of
+    # data points should be the same so times and values can be matched.
+    #
+    # Time data format is always the same and fields are separated by space:
+    # station_longitude station_latitude unix_timestamp
+    #
+    # Values are also separated by space but number of fields depends on the different measurements stations provide.
+    # The number of fields should be the same as number of available measurement types so these two can be matched.
+    #
+    try:
+        measurement_times_array = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']['om:result']
+                                   ['gmlcov:MultiPointCoverage']['gml:domainSet']['gmlcov:SimpleMultiPoint']
+                                   ['gmlcov:positions'].split('\n'))
+        measurement_values_arrays = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']['om:result']
+                                     ['gmlcov:MultiPointCoverage']['gml:rangeSet']['gml:DataBlock']
+                                     ['gml:doubleOrNilReasonTupleList'].split('\n'))
+    except KeyError:
+        # I guess this could happen if station does not have any data from the past hour
+        raise default_exception
+
     measurements = []
-    measurement_times_dict = data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']['om:result']['gmlcov:MultiPointCoverage']['gml:domainSet']['gmlcov:SimpleMultiPoint']['gmlcov:positions'].split('\n')
-    for measurement_dict in measurement_times_dict:
-        position_and_time = measurement_dict.strip().split('  ', 1)
-        position = position_and_time[0]
-        time = datetime.utcfromtimestamp(int(position_and_time[1]))
-        measurements.append({
-            'position': position,
-            'time': time,
-            'values': []
-        })
+    for idx, measurement_time_data in enumerate(measurement_times_array):
+        measurement_value_data = measurement_values_arrays[idx]
+        time_parts = measurement_time_data.strip().split(' ')
+
+        # Measurement time data. Values are added next.
+        measurement = {
+            'lon': float(time_parts[0]),
+            'lat': float(time_parts[1]),
+            'timestamp': datetime.utcfromtimestamp(int(time_parts[3]))
+        }
+
+        # Measurement value data
+        values = {}
+        for value_idx, value in enumerate(measurement_value_data.strip().split(' ')):
+            values[measurement_types[value_idx]] = float(value)
+
+        if contains_valid_values(values):
+            measurement.update(values)
+            measurements.append(measurement)
+
     return measurements
 
 
-def try_get_measurement_value_set(data):
-    values = []
-    measurement_value_sets = data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']['om:result']['gmlcov:MultiPointCoverage']['gml:rangeSet']['gml:DataBlock']['gml:doubleOrNilReasonTupleList'].split('\n')
-    for measurement_value_set in measurement_value_sets:
-        values.append(measurement_value_set.strip().split(' '))
-    return values
+def try_get_measurements_per_station(data):
+    """
+    This is where the magic happens. It gets all the necessary information from the FMI response combines it
+    into one array of dictionaries
+    :param data: Response data from FMI as xmltodict object
+    :return: List of available measurements from one or more weather stations
+    """
+    output = []
+
+    stations = try_get_stations(data)
+    measurements = try_get_measurements(data)
+
+    # Measurements are matched with stations using coordinates. [wtf.gif]
+    # Since measurements are ordered by coordinates, let's match them in a simple for-loop instead of trying
+    # to do a pointless optimization with dictionaries ;)
+    for station in stations:
+        station_measurements = []
+        for measurement in measurements:
+            if station['lat'] == measurement['lat'] and station['lon'] == measurement['lon']:
+                station_measurements.append(measurement)
+
+        output.append({
+            'station': station,
+            'measurements': station_measurements
+        })
+
+    return output
 
 
-def build_data(stations, measurement_types, measurement_times, measurement_value_sets):
-    # Combine measurement values with types
-    enriched_value_sets = []
-    for value_set in measurement_value_sets:
-        enriched_value_set = {}
-        for value_idx, value in enumerate(value_set):
-            enriched_value_set[measurement_types[value_idx]] = value
-        enriched_value_sets.append(enriched_value_set)
-
-    # Combine measurement times with enriched values
-    enriched_measurement_times = measurement_times.copy()
-    for time_idx, time in enumerate(enriched_measurement_times):
-        time['values'] = enriched_value_sets[time_idx]
-
-    # Remove measurements with no values
-    cleaned_measurement_times = []
-    for measurement in enriched_measurement_times:
-        for _, value in measurement['values'].items():
-            if value != 'NaN':
-                cleaned_measurement_times.append(measurement)
-                break
-
-    # Combine stations with enriched measurements
-    for measurement in cleaned_measurement_times:
-        stations[measurement['position']]['measurements'].append(measurement)
-
-    return stations
-
-
-def get_closest_station(lat, lon, built_data):
+def get_closest_measurements(lat, lon, measurements):
+    """
+    Get measurements from the closest station
+    :param lat: Latitude
+    :param lon: Longitude
+    :param measurements: Measurements from all stations
+    :return: Measurements from the closes weather station
+    """
     closest_distance = sys.maxsize
-    closest_station = None
-    for key, station in built_data.items():
-        distance = math.sqrt(
-            ((lat - float(station['position']['lat'])) ** 2) + ((lon - float(station['position']['lon'])) ** 2))
+    closest_measurement = None
+    for measurement in measurements:
+        station = measurement['station']
+        distance = math.sqrt(((lat - float(station['lat'])) ** 2) + ((lon - float(station['lon'])) ** 2))
         if distance < closest_distance:
-            closest_station = station
+            closest_measurement = measurement
             closest_distance = distance
-    return closest_station
+    return closest_measurement
 
 
-def assign_measurements_to_weather(weather, measurements):
-    for value_type, value in measurements:
-        if value != 'NaN':
-            if value_type == 't2m':
-                weather.temperature = models.NewWeatherMeasurement(float(value), '°C')
-            elif value_type == 'ws_10min':
-                weather.wind_speed = models.NewWeatherMeasurement(float(value), 'm/s')
-            elif value_type == 'wg_10min':
-                weather.wind_gust = models.NewWeatherMeasurement(float(value), 'm/s')
-            elif value_type == 'wd_10min':
-                weather.wind_direction = models.NewWeatherMeasurement(float(value), '°')
-            elif value_type == 'rh':
-                weather.humidity = models.NewWeatherMeasurement(float(value), '%')
-            elif value_type == 'td':
-                weather.dew_point = models.NewWeatherMeasurement(float(value), '°C')
-            elif value_type == 'r_1h':
-                weather.precipitation_amount = models.NewWeatherMeasurement(float(value), 'mm')
-            elif value_type == 'ri_10min':
-                weather.precipitation_intensity = models.NewWeatherMeasurement(float(value), 'mm/h')
-            elif value_type == 'p_sea':
-                weather.pressure = models.NewWeatherMeasurement(float(value), 'hPa')
-            elif value_type == 'n_man':
-                weather.visibility = models.NewWeatherMeasurement(float(value), '1/8')
-            elif value_type == 'wawa':  # TODO: Implement codes: https://helda.helsinki.fi/bitstream/handle/10138/37284/PRO_GRADU_BOOK_HERMAN.pdf?sequence=2
-                continue
+def parse_weather_data(response,
+                       lat: Optional[float] = None,
+                       lon: Optional[float] = None):
+    """
+    Parse weather information from FMI response
+    :param response: HTTP response
+    :param lat: latitude
+    :param lon: longitude
+    :return: Weather information
+    """
+    data = xmltodict.parse(response.text)
+
+    throw_on_exception_response(data)
+
+    all_measurements = try_get_measurements_per_station(data)
+    if len(all_measurements) == 0:
+        raise Exception('No weather data available')
+
+    # Weather by place name return only one station data so let's use it as a default because why not
+    closest_measurement_data = all_measurements[0]
+
+    if lat is not None and lon is not None:
+        closest_measurement_data = get_closest_measurements(lat, lon, all_measurements)
+
+    latest_measurement = closest_measurement_data['measurements'][-1]
+
+    return models.Weather(closest_measurement_data['station']['name'],
+                          closest_measurement_data['station']['lat'],
+                          closest_measurement_data['station']['lon'],
+                          latest_measurement)
+
+
+def throw_on_exception_response(data):
+    """
+    Throw an exception if FMI response contains exception element (service always returns 200)
+    :param data: Response data from FMI as xmltodict object
+    """
+    if 'ExceptionReport' in data.keys():
+        raise Exception(data['ExceptionReport']['Exception']['ExceptionText'][0])
+    
+
+def is_float(v):
+    """
+    Make sure the value is float and not a NaN
+    :param v:
+    :return:
+    """
+    try:
+        f = float(v)
+        return not math.isnan(f)
+    except (ValueError, TypeError):
+        return False
