@@ -1,3 +1,5 @@
+![Test](https://github.com/saaste/fmi-weather/workflows/Test/badge.svg?branch=master)
+
 # Finnish Meteorological Institute Weather
 Library for fetching weather information from
 [Finnish Meteorological Institute (FMI)](https://en.ilmatieteenlaitos.fi/open-data). 
