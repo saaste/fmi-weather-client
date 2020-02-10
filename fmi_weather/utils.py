@@ -8,7 +8,8 @@ import xmltodict
 import fmi_weather.models as models
 
 
-default_exception = Exception('No weather data available')
+class NoWeatherDataError(Exception):
+    pass
 
 
 def try_get_stations(data):
@@ -30,14 +31,12 @@ def try_get_stations(data):
 
     stations = []
 
-    try:
-        stations_dict = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']
-                         ['om:featureOfInterest']['sams:SF_SpatialSamplingFeature']['sams:shape']['gml:MultiPoint']
-                         ['gml:pointMember'])
-    except KeyError:
-        # This happens when bounding box does not contain any stations.
-        # Shouldn't really happen as long as original coordinates are in Finland
-        raise default_exception
+    if 'wfs:member' not in data['wfs:FeatureCollection']:
+        raise NoWeatherDataError
+
+    stations_dict = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']
+                     ['om:featureOfInterest']['sams:SF_SpatialSamplingFeature']['sams:shape']['gml:MultiPoint']
+                     ['gml:pointMember'])
 
     # xmltodict can return a list or an object depending on how many child the element has
     if isinstance(stations_dict, list):
@@ -83,6 +82,9 @@ def try_get_measurements(data):
 
     measurement_types = try_get_available_measurement_types(data)
 
+    if 'wfs:member' not in data['wfs:FeatureCollection']:
+        raise NoWeatherDataError
+
     # Get measurement times and values for matching. They are different elements in XML but the amount of
     # data points should be the same so times and values can be matched.
     #
@@ -92,16 +94,12 @@ def try_get_measurements(data):
     # Values are also separated by space but number of fields depends on the different measurements stations provide.
     # The number of fields should be the same as number of available measurement types so these two can be matched.
     #
-    try:
-        measurement_times_array = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']['om:result']
-                                   ['gmlcov:MultiPointCoverage']['gml:domainSet']['gmlcov:SimpleMultiPoint']
-                                   ['gmlcov:positions'].split('\n'))
-        measurement_values_arrays = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']['om:result']
-                                     ['gmlcov:MultiPointCoverage']['gml:rangeSet']['gml:DataBlock']
-                                     ['gml:doubleOrNilReasonTupleList'].split('\n'))
-    except KeyError:
-        # I guess this could happen if station does not have any data from the past hour
-        raise default_exception
+    measurement_times_array = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']['om:result']
+                               ['gmlcov:MultiPointCoverage']['gml:domainSet']['gmlcov:SimpleMultiPoint']
+                               ['gmlcov:positions'].split('\n'))
+    measurement_values_arrays = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']['om:result']
+                                 ['gmlcov:MultiPointCoverage']['gml:rangeSet']['gml:DataBlock']
+                                 ['gml:doubleOrNilReasonTupleList'].split('\n'))
 
     measurements = []
     for idx, measurement_time_data in enumerate(measurement_times_array):
