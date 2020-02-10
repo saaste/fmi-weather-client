@@ -1,4 +1,4 @@
-![Test](https://github.com/saaste/fmi-weather/workflows/Test/badge.svg?branch=master)
+![Test](https://github.com/saaste/fmi-weather/workflows/tests/badge.svg?branch=master)
 ![Last commit](https://img.shields.io/github/last-commit/saaste/fmi-weather)
 # Finnish Meteorological Institute Weather
 Library for fetching weather information from
