@@ -16,7 +16,42 @@ class ServiceError(Exception):
     pass
 
 
-def try_get_stations(data):
+def parse_weather_data(response,
+                       lat: Optional[float] = None,
+                       lon: Optional[float] = None):
+    """
+    Parse weather information from FMI response
+    :param response: HTTP response
+    :param lat: latitude
+    :param lon: longitude
+    :return: Weather information
+    """
+    data = xmltodict.parse(response.text)
+
+    # Check exception response
+    if 'ExceptionReport' in data.keys():
+        raise ServiceError(data['ExceptionReport']['Exception']['ExceptionText'][0])
+
+    if 'wfs:member' not in data['wfs:FeatureCollection'].keys():
+        raise NoWeatherDataError
+
+    all_measurements = _try_get_measurements_per_station(data)
+
+    # Weather by place name return only one station data so let's use it as a default because why not
+    closest_measurement_data = all_measurements[0]
+
+    if lat is not None and lon is not None:
+        closest_measurement_data = _get_closest_measurements(lat, lon, all_measurements)
+
+    latest_measurement = closest_measurement_data['measurements'][-1]
+
+    return models.Weather(closest_measurement_data['station']['name'],
+                          closest_measurement_data['station']['lat'],
+                          closest_measurement_data['station']['lon'],
+                          latest_measurement)
+
+
+def _try_get_stations(data):
     """
     Try to get station data from the response. When call is made with place name, there is only one
     station available. For coordinate search there might be more.
@@ -53,7 +88,7 @@ def try_get_stations(data):
     return stations
 
 
-def try_get_observation_types(data):
+def _try_get_observation_types(data):
     """
     Try to get available observation types (temperature, pressure etc) from the response.
     Available types depends on the available stations.
@@ -68,7 +103,7 @@ def try_get_observation_types(data):
     return measurement_types
 
 
-def try_get_measurements(data):
+def _try_get_measurements(data):
     """
     Try to get available measurements and values
     :param data: Response data from FMI as xmltodict object
@@ -84,10 +119,7 @@ def try_get_measurements(data):
                 return True
         return False
 
-    measurement_types = try_get_observation_types(data)
-
-    if 'wfs:member' not in data['wfs:FeatureCollection']:
-        raise NoWeatherDataError
+    measurement_types = _try_get_observation_types(data)
 
     # Get measurement times and values for matching. They are different elements in XML but the amount of
     # data points should be the same so times and values can be matched.
@@ -129,7 +161,7 @@ def try_get_measurements(data):
     return measurements
 
 
-def try_get_measurements_per_station(data):
+def _try_get_measurements_per_station(data):
     """
     This is where the magic happens. It gets all the necessary information from the FMI response combines it
     into one array of dictionaries
@@ -138,8 +170,8 @@ def try_get_measurements_per_station(data):
     """
     output = []
 
-    stations = try_get_stations(data)
-    measurements = try_get_measurements(data)
+    stations = _try_get_stations(data)
+    measurements = _try_get_measurements(data)
 
     # Measurements are matched with stations using coordinates. [wtf.gif]
     # Since measurements are ordered by coordinates, let's match them in a simple for-loop instead of trying
@@ -158,7 +190,7 @@ def try_get_measurements_per_station(data):
     return output
 
 
-def get_closest_measurements(lat, lon, measurements):
+def _get_closest_measurements(lat, lon, measurements):
     """
     Get measurements from the closest station
     :param lat: Latitude
@@ -176,46 +208,6 @@ def get_closest_measurements(lat, lon, measurements):
             closest_distance = distance
     return closest_measurement
 
-
-def parse_weather_data(response,
-                       lat: Optional[float] = None,
-                       lon: Optional[float] = None):
-    """
-    Parse weather information from FMI response
-    :param response: HTTP response
-    :param lat: latitude
-    :param lon: longitude
-    :return: Weather information
-    """
-    data = xmltodict.parse(response.text)
-    throw_on_exception_response(data)
-
-    all_measurements = try_get_measurements_per_station(data)
-    if len(all_measurements) == 0:
-        raise Exception('No weather data available')
-
-    # Weather by place name return only one station data so let's use it as a default because why not
-    closest_measurement_data = all_measurements[0]
-
-    if lat is not None and lon is not None:
-        closest_measurement_data = get_closest_measurements(lat, lon, all_measurements)
-
-    latest_measurement = closest_measurement_data['measurements'][-1]
-
-    return models.Weather(closest_measurement_data['station']['name'],
-                          closest_measurement_data['station']['lat'],
-                          closest_measurement_data['station']['lon'],
-                          latest_measurement)
-
-
-def throw_on_exception_response(data):
-    """
-    Throw an exception if FMI response contains exception element (service always returns 200)
-    :param data: Response data from FMI as xmltodict object
-    """
-    if 'ExceptionReport' in data.keys():
-        raise ServiceError(data['ExceptionReport']['Exception']['ExceptionText'][0])
-    
 
 def is_float(v):
     """
