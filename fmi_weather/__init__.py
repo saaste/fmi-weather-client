@@ -18,15 +18,17 @@ _DEFAULT_PARAMS = {
 
 def weather_by_coordinates(lat: float, lon: float):
     """
-    Get the latest weather information by coordinates
+    Get the latest weather information by coordinates.
+
+    110 km x 110 km bounding box used to search the closest weather station. Observations are from the past hour.
+
     :param lat: Latitude (e.g. 25.67087)
     :param lon: Longitude (e.g. 62.39758)
     :return: Latest weather information from the closest weather station
     """
-    bbox = '%s,%s,%s,%s' % (lon - 0.9, lat - 0.5, lon + 0.9, lat + 0.5)
     params = _DEFAULT_PARAMS.copy()
     params.update({
-        'bbox': bbox,
+        'bbox': '%s,%s,%s,%s' % (lon - 0.5, lat - 0.5, lon + 0.5, lat + 0.5),
         'starttime': (datetime.utcnow() + timedelta(hours=-1)).isoformat(timespec='seconds')
     })
 
@@ -36,7 +38,10 @@ def weather_by_coordinates(lat: float, lon: float):
 
 def weather_by_place_name(name: str):
     """
-    Get the latest weather information by place name
+    Get the latest weather information by place name.
+
+    Search relies of FMI's own serviec. Observations are from the past hour.
+
     :param name: Place name (e.g. Kaisaniemi,Helsinki)
     :return: Latest weather information from the closest weather station
     """
