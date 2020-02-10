@@ -3,7 +3,7 @@ from unittest import mock
 
 import fmi_weather
 import fmi_weather.test.test_data as test_data
-from fmi_weather.utils import NoWeatherDataError, ServiceError
+from fmi_weather.parser import NoWeatherDataError, ServiceError
 
 
 class FMIWeatherTest(unittest.TestCase):

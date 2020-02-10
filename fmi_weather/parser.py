@@ -5,7 +5,7 @@ from typing import Optional
 
 import xmltodict
 
-import fmi_weather.models as models
+from fmi_weather import models, utils
 
 
 class NoWeatherDataError(Exception):
@@ -104,21 +104,6 @@ def _try_get_observation_types(data):
 
 
 def _try_get_measurements(data):
-    """
-    Try to get available measurements and values
-    :param data: Response data from FMI as xmltodict object
-    :return: List of measurement values
-    """
-    def contains_valid_values(vals):
-        # Temperature is a must have
-        if math.isnan(vals['t2m']):
-            return False
-
-        for k, v in vals.items():
-            if not math.isnan(v):
-                return True
-        return False
-
     measurement_types = _try_get_observation_types(data)
 
     # Get measurement times and values for matching. They are different elements in XML but the amount of
@@ -154,7 +139,7 @@ def _try_get_measurements(data):
         for value_idx, value in enumerate(measurement_value_data.strip().split(' ')):
             values[measurement_types[value_idx]] = float(value)
 
-        if contains_valid_values(values):
+        if utils.is_valid_observation(values):
             measurement.update(values)
             measurements.append(measurement)
 
@@ -207,16 +192,3 @@ def _get_closest_measurements(lat, lon, measurements):
             closest_measurement = measurement
             closest_distance = distance
     return closest_measurement
-
-
-def is_float(v):
-    """
-    Make sure the value is float and not a NaN
-    :param v:
-    :return:
-    """
-    try:
-        f = float(v)
-        return not math.isnan(f)
-    except (ValueError, TypeError):
-        return False

@@ -16,7 +16,6 @@ def print_weather(weather):
     print('Visibility: %s' % weather.visibility)
     print('Cloud coverage: %s' % weather.cloud_coverage)
 
-fmi_weather._BASE_URL
 
 weather = fmi_weather.weather_by_coordinates(67.2463, 23.6659)
 weather2 = fmi_weather.weather_by_place_name("Iisalmi")

@@ -2,8 +2,7 @@ from datetime import datetime, timedelta
 
 import requests
 
-import fmi_weather.utils as utils
-
+from fmi_weather import parser
 
 _BASE_URL = 'http://opendata.fmi.fi/wfs'
 
@@ -33,7 +32,7 @@ def weather_by_coordinates(lat: float, lon: float):
     })
 
     response = requests.get(_BASE_URL, params=params)
-    return utils.parse_weather_data(response, lat, lon)
+    return parser.parse_weather_data(response, lat, lon)
 
 
 def weather_by_place_name(name: str):
@@ -52,4 +51,4 @@ def weather_by_place_name(name: str):
     })
 
     response = requests.get(_BASE_URL, params=params)
-    return utils.parse_weather_data(response)
+    return parser.parse_weather_data(response)
