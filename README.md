@@ -1,18 +1,24 @@
 ![Test](https://github.com/saaste/fmi-weather-client/workflows/tests/badge.svg?branch=master)
 ![Last commit](https://img.shields.io/github/last-commit/saaste/fmi-weather-client)
+![Latest version in GitHub](https://img.shields.io/github/v/release/saaste/fmi-weather-client)
+![Latest version in PyPi](https://img.shields.io/pypi/v/fmi-weather-client)
 
 # Finnish Meteorological Institute Weather
 Library for fetching weather information from
 [Finnish Meteorological Institute (FMI)](https://en.ilmatieteenlaitos.fi/open-data). 
 
-Originally build for personal use because I wanted to create a FMI integration for
+Originally build for personal use because I wanted to create FMI integration for
 [Home Assistant](https://www.home-assistant.io/).
-
-Library is not yet available in [PyPi](https://pypi.org/).
 
 ## How to use
 
 Working example can be found in [example.py](example.py).
+
+### Install
+
+```
+$ pip install fmi-weather-client 
+```
 
 ### Get the weather by place name
 
