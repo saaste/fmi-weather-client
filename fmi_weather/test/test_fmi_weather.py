@@ -3,7 +3,7 @@ from unittest import mock
 
 import fmi_weather
 import fmi_weather.test.test_data as test_data
-from fmi_weather.parser import NoWeatherDataError, ServiceError
+from fmi_weather.errors import NoWeatherDataError, ServiceError
 
 
 class FMIWeatherTest(unittest.TestCase):
@@ -23,8 +23,13 @@ class FMIWeatherTest(unittest.TestCase):
         with self.assertRaises(NoWeatherDataError):
             fmi_weather.weather_by_coordinates(27.31317, 63.14343)
 
-    @mock.patch('requests.get', side_effect=test_data.mock_exception_response)
-    def test_exception_response(self, mock_get):
+    @mock.patch('requests.get', side_effect=test_data.mock_no_location_exception_response)
+    def test_no_location_exception_response(self, mock_get):
+        with self.assertRaises(NoWeatherDataError):
+            fmi_weather.weather_by_coordinates(27.31317, 63.14343)
+
+    @mock.patch('requests.get', side_effect=test_data.mock_other_exception_response)
+    def test_other_exception_response(self, mock_get):
         with self.assertRaises(ServiceError):
             fmi_weather.weather_by_coordinates(27.31317, 63.14343)
 

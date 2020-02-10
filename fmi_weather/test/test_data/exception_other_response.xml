@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport xmlns="http://www.opengis.net/ows/1.1"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd"
+                 version="2.0.0" xml:lang="eng">
+    <Exception exceptionCode="OperationParsingFailed">
+        <ExceptionText>This is just a fake error!</ExceptionText>
+        <ExceptionText>URI: /wfs?place=Notfound&amp;request=GetFeature&amp;service=WFS&amp;starttime=2020-02-10T10%3A00%3A00Z&amp;storedquery_id=fmi%3A%3Aobservations%3A%3Aweather%3A%3Amultipointcoverage&amp;timestep=10&amp;version=2.0.0</ExceptionText>
+    </Exception>
+</ExceptionReport>
