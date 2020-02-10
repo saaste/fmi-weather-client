@@ -5,7 +5,7 @@ from typing import Optional
 
 import xmltodict
 
-from fmi_weather import models, utils, errors
+from fmi_weather import errors, models, utils
 
 
 def parse_weather_data(response,
@@ -63,10 +63,6 @@ def _try_get_stations(data):
         }
 
     stations = []
-
-    if 'wfs:member' not in data['wfs:FeatureCollection']:
-        raise NoWeatherDataError
-
     stations_dict = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']
                      ['om:featureOfInterest']['sams:SF_SpatialSamplingFeature']['sams:shape']['gml:MultiPoint']
                      ['gml:pointMember'])
