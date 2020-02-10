@@ -5,15 +5,7 @@ from typing import Optional
 
 import xmltodict
 
-from fmi_weather import models, utils
-
-
-class NoWeatherDataError(Exception):
-    pass
-
-
-class ServiceError(Exception):
-    pass
+from fmi_weather import models, utils, errors
 
 
 def parse_weather_data(response,
@@ -30,10 +22,12 @@ def parse_weather_data(response,
 
     # Check exception response
     if 'ExceptionReport' in data.keys():
-        raise ServiceError(data['ExceptionReport']['Exception']['ExceptionText'][0])
+        if 'No locations found for the place' in data['ExceptionReport']['Exception']['ExceptionText'][0]:
+            raise errors.NoWeatherDataError
+        raise errors.ServiceError(data['ExceptionReport']['Exception']['ExceptionText'][0])
 
     if 'wfs:member' not in data['wfs:FeatureCollection'].keys():
-        raise NoWeatherDataError
+        raise errors.NoWeatherDataError
 
     all_measurements = _try_get_measurements_per_station(data)
 

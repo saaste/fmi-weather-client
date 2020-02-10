@@ -9,32 +9,39 @@ Library is not yet available in [PyPi](https://pypi.org/).
 
 ## How to use
 
-Working example can be found in [example.py](example.py). If there is a problem parsing the response or FMI service
-returns an exception response, an exception is throws. It is up to the caller to handle the exceptions.
+Working example can be found in [example.py](example.py).
 
-#### Get the weather using a place name
+### Get the weather by place name
 
-Selected station depends on FMI service but in general it should be the closest one and provide the latest measurements.
+Weather station depends on FMI service.
 ```python
 import fmi_weather
 
 weather = fmi_weather.weather_by_place_name("Mäkkylä, Espoo")
 ```
 
-#### Get the weather using coordinates
+If place name is not known or weather data is not available, the following exception is thrown:
+```
+fmi_weather.errors.NoWeatherDataError
+```
 
-FMI does not provide an easy way to get the the closest weather station by coordinates. A bounding box is used instead
-since FMI returns all weather stations inside the box. The closest one to coordinates is selected, but
-currently there is no check verifying what kind of station it is.
+### Get the weather by coordinates
 
+Weather stations is the closest one
 ```python
 import fmi_weather
 
 weather = fmi_weather.weather_by_coordinates(63.361604, 27.392607)
 ```
 
-#### Weather data
-Depending on the weather station the following information is available:
+If there are no stations within 50 km, the following exception is thrown:
+```
+fmi_weather.errors.NoWeatherDataError
+```
+
+
+### Weather data
+Available weather information depends on the weather station. Currently supported fields: 
 - Station name
 - Station latitude
 - Station longitude
@@ -43,22 +50,27 @@ Depending on the weather station the following information is available:
 - Humidity (%)
 - Wind speed (m/s)
 - Wind gust (m/s)
+  - Maximum gust wind in the past 10 minutes
 - Wind direction (°)
 - Dew point (°C)
 - Precipitation amount (mm)
+  - Amount of rain in the past hour
 - Precipitation intensity (mm/h)
 - Pressure (hPa)
 - Visibility (m)
-- Cloud coverage (1/8)
+- Cloud coverage
+  - Cloud coverage is indicated as 1/8 sky.
+  - 0.0 means no clouds
+  - 4.0 means half cloudy
+  - 8.0 means overcast
 
-Measurement data contains two fields: `value` and `unit`. You can also just print the measurement object to get a string
+Observation data contains two fields: `value` and `unit`. You can also just print the measurement object to get a string
 representation:
 ```python
 print('Temperature: %s' % weather.temperature)
 
 # Output: Temperature: 1.4 °C
 ```
-
 
 ## Development
 
