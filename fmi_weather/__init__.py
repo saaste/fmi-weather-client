@@ -1,57 +1,39 @@
-from typing import Optional
-from fmi_weather.models import Station
-import math
-import fmi_weather.http_client as fmi_http_client
-import fmi_weather.xml_parser as fmi_xml_parser
+from datetime import datetime, timedelta
+
+import requests
+
+import fmi_weather.utils as utils
 
 
-def get_closest_station(lat: float, lon: float) -> Optional[Station]:
+def weather_by_coordinates(lat: float, lon: float):
     """
-    Get closest weather station
-
-    :param lat: Latitude
-    :param lon: Longitude
-    :return: Closest weather station if found; None otherwise
+    Get the latest weather information by coordinates
+    :param lat: Latitude (e.g. 25.67087)
+    :param lon: Longitude (e.g. 62.39758)
+    :return: Latest weather information from the closest weather station
     """
-    http = fmi_http_client.FMIHttpClient()
-    xml = fmi_xml_parser.FMIXMLParser()
+    bbox = '%s,%s,%s,%s' % (lon - 0.9, lat - 0.5, lon + 0.9, lat + 0.5)
+    params = utils.default_params.copy()
+    params.update({
+        'bbox': bbox,
+        'starttime': (datetime.utcnow() + timedelta(hours=-1)).isoformat(timespec='seconds')
+    })
 
-    response = http.get_all_stations()
-    stations = xml.parse_stations(response.text)
-
-    closest_station = None
-    closest_distance = float('inf')
-
-    for station in stations:
-        distance = math.sqrt(((lat - station.lat) ** 2) + ((lon - station.lon) ** 2))
-        if distance < closest_distance:
-            closest_distance = distance
-            closest_station = station
-
-    return closest_station
+    response = requests.get("http://opendata.fmi.fi/wfs", params=params)
+    return utils.parse_weather_data(response, lat, lon)
 
 
-def get_weather_by_place(place: str):
+def weather_by_place_name(name: str):
     """
-    Get weather report by a place
-
-    :param place: Place name (e.g. "Helsinki" or "Leppävaara, Espoo")
-    :return: Weather report
+    Get the latest weather information by place name
+    :param name: Place name (e.g. Kaisaniemi,Helsinki)
+    :return: Latest weather information from the closest weather station
     """
-    http = fmi_http_client.FMIHttpClient()
-    xml = fmi_xml_parser.FMIXMLParser()
-    response = http.get_place_weather(place.replace(" ", ""))
-    return xml.parse_weather(response.text)
+    params = utils.default_params.copy()
+    params.update({
+        'place': name.strip().replace(' ', ''),
+        'starttime': (datetime.utcnow() + timedelta(hours=-1)).isoformat(timespec='seconds')
+    })
 
-
-def get_weather_by_station(station_id: int):
-    """
-    Get weather report by a station
-
-    :param station_id: Station ID
-    :return: Weather report
-    """
-    http = fmi_http_client.FMIHttpClient()
-    xml = fmi_xml_parser.FMIXMLParser()
-    response = http.get_station_weather(station_id)
-    return xml.parse_weather(response.text)
+    response = requests.get("http://opendata.fmi.fi/wfs", params=params)
+    return utils.parse_weather_data(response)

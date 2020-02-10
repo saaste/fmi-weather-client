@@ -1,54 +1,30 @@
 import unittest
-import os
 import fmi_weather
 from unittest import mock
-
-
-def mock_stations_response(*args, **kwargs):
-    class MockResponse:
-        def __init__(self, xml):
-            self.text = xml
-
-    dirname = os.path.dirname(__file__)
-    xml_file = os.path.join(dirname, 'test_data/fmi_stations_valid_response.xml')
-    with open(xml_file, 'r') as mock_file:
-        xml = mock_file.read()
-
-    return MockResponse(xml)
-
-
-def mock_weather_response(*args, **kwargs):
-    class MockResponse:
-        def __init__(self, xml):
-            self.text = xml
-
-    dirname = os.path.dirname(__file__)
-    xml_file = os.path.join(dirname, 'test_data/fmi_weather_valid_response.xml')
-    with open(xml_file, 'r') as mock_file:
-        xml = mock_file.read()
-
-    return MockResponse(xml)
+import fmi_weather.test.test_data as test_data
 
 
 class FMIWeatherTest(unittest.TestCase):
 
-    @mock.patch('fmi_weather.http_client.FMIHttpClient.get_all_stations', side_effect=mock_stations_response)
-    def test_make_request_stations(self, mock_get):
-        closest_station = fmi_weather.get_closest_station(59.9, 19.9)
-        self.assertEqual(closest_station.id, 100909)
-        self.assertEqual(closest_station.name, 'Lemland Nyhamn')
-        self.assertEqual(closest_station.lat, 59.959194)
-        self.assertEqual(closest_station.lon, 19.953667)
-
-    @mock.patch('fmi_weather.http_client.FMIHttpClient.get_place_weather', side_effect=mock_weather_response)
+    @mock.patch('requests.get', side_effect=test_data.mock_place_response)
     def test_get_weather_by_place(self, mock_get):
-        place_weather = fmi_weather.get_weather_by_place('Helsinki Kaisaniemi')
-        self.assertEqual(place_weather.location.name, 'Helsinki Kaisaniemi')
+        place_weather = fmi_weather.weather_by_place_name('Espoo, Tapiola')
+        self.assertEqual(place_weather.station_name, 'Espoo Tapiola')
 
-    @mock.patch('fmi_weather.http_client.FMIHttpClient.get_station_weather', side_effect=mock_weather_response)
+    @mock.patch('requests.get', side_effect=test_data.mock_bbox_response)
     def test_get_weather_by_station(self, mock_get):
-        place_weather = fmi_weather.get_weather_by_station(100909)
-        self.assertEqual(place_weather.location.name, 'Helsinki Kaisaniemi')
+        place_weather = fmi_weather.weather_by_coordinates(27.31317, 63.14343)
+        self.assertEqual(place_weather.station_name, 'Kuopio Maaninka')
+
+    @mock.patch('requests.get', side_effect=test_data.mock_empty_response)
+    def test_empty_response(self, mock_get):
+        with self.assertRaises(Exception):
+            fmi_weather.weather_by_coordinates(27.31317, 63.14343)
+
+    @mock.patch('requests.get', side_effect=test_data.mock_exception_response())
+    def test_exception_response(self, mock_get):
+        with self.assertRaises(Exception):
+            fmi_weather.weather_by_coordinates(27.31317, 63.14343)
 
 
 if __name__ == '__main__':
