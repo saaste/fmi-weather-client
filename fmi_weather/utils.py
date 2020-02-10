@@ -7,13 +7,6 @@ import xmltodict
 
 import fmi_weather.models as models
 
-default_params = {
-    'service': 'WFS',
-    'version': '2.0.0',
-    'request': 'getFeature',
-    'storedquery_id': 'fmi::observations::weather::multipointcoverage',
-    'timestep': '10'
-}
 
 default_exception = Exception('No weather data available')
 
