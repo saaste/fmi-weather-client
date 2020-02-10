@@ -1,5 +1,6 @@
 ![Test](https://github.com/saaste/fmi-weather/workflows/tests/badge.svg?branch=master)
 ![Last commit](https://img.shields.io/github/last-commit/saaste/fmi-weather)
+
 # Finnish Meteorological Institute Weather
 Library for fetching weather information from
 [Finnish Meteorological Institute (FMI)](https://en.ilmatieteenlaitos.fi/open-data). 
@@ -17,28 +18,28 @@ Working example can be found in [example.py](example.py).
 
 Weather station depends on FMI service.
 ```python
-import fmi_weather
+import fmi_weather_client
 
-weather = fmi_weather.weather_by_place_name("Mäkkylä, Espoo")
+weather = fmi_weather_client.weather_by_place_name("Mäkkylä, Espoo")
 ```
 
 If place name is not known or weather data is not available, the following exception is thrown:
 ```
-fmi_weather.errors.NoWeatherDataError
+fmi_weather_client.errors.NoWeatherDataError
 ```
 
 ### Get the weather by coordinates
 
 Weather stations is the closest one
 ```python
-import fmi_weather
+import fmi_weather_client
 
-weather = fmi_weather.weather_by_coordinates(63.361604, 27.392607)
+weather = fmi_weather_client.weather_by_coordinates(63.361604, 27.392607)
 ```
 
 If there are no stations within 50 km, the following exception is thrown:
 ```
-fmi_weather.errors.NoWeatherDataError
+fmi_weather_client.errors.NoWeatherDataError
 ```
 
 

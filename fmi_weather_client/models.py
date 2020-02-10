@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from fmi_weather import utils
+from fmi_weather_client import utils
 
 
 class WeatherMeasurement:

@@ -5,7 +5,7 @@ from typing import Optional
 
 import xmltodict
 
-from fmi_weather import errors, models, utils
+from fmi_weather_client import errors, models, utils
 
 
 def parse_weather_data(response,

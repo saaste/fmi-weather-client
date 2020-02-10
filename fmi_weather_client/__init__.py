@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 import requests
 
-from fmi_weather import parser
+from fmi_weather_client import parser
 
 _BASE_URL = 'http://opendata.fmi.fi/wfs'
 
