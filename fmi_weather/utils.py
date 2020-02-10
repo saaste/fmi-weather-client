@@ -12,6 +12,10 @@ class NoWeatherDataError(Exception):
     pass
 
 
+class ServiceError(Exception):
+    pass
+
+
 def try_get_stations(data):
     """
     Try to get station data from the response. When call is made with place name, there is only one
@@ -49,10 +53,10 @@ def try_get_stations(data):
     return stations
 
 
-def try_get_available_measurement_types(data):
+def try_get_observation_types(data):
     """
-    Try to get available measurement types (temperature, pressure etc) from the response. Available types depends
-    on the matched stations.
+    Try to get available observation types (temperature, pressure etc) from the response.
+    Available types depends on the available stations.
     :param data: Response data from FMI as xmltodict object
     :return: List of measurement types
     """
@@ -80,7 +84,7 @@ def try_get_measurements(data):
                 return True
         return False
 
-    measurement_types = try_get_available_measurement_types(data)
+    measurement_types = try_get_observation_types(data)
 
     if 'wfs:member' not in data['wfs:FeatureCollection']:
         raise NoWeatherDataError
@@ -184,7 +188,6 @@ def parse_weather_data(response,
     :return: Weather information
     """
     data = xmltodict.parse(response.text)
-
     throw_on_exception_response(data)
 
     all_measurements = try_get_measurements_per_station(data)
@@ -211,7 +214,7 @@ def throw_on_exception_response(data):
     :param data: Response data from FMI as xmltodict object
     """
     if 'ExceptionReport' in data.keys():
-        raise Exception(data['ExceptionReport']['Exception']['ExceptionText'][0])
+        raise ServiceError(data['ExceptionReport']['Exception']['ExceptionText'][0])
     
 
 def is_float(v):
