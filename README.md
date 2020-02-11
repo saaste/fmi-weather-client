@@ -22,12 +22,16 @@ $ pip install fmi-weather-client
 
 ### Get the weather by place name
 
-Weather station depends on FMI service.
 ```python
 import fmi_weather_client
 
 weather = fmi_weather_client.weather_by_place_name("Mäkkylä, Espoo")
 ```
+
+Selected weather station depends on FMI service. Be aware, that sometimes FMI service does pretty poor job at selecting
+a station that provides meaningful data. For example, at the time of writing weather from `Sipoo` returns data from
+a station that measures cloud coverage and nothing more. Another example is `Kaivopuisto, Helsinki` which returns data
+from a station that seems to be unavailable or broken.
 
 If place name is not known or weather data is not available, the following exception is thrown:
 ```
@@ -36,14 +40,15 @@ fmi_weather_client.errors.NoWeatherDataError
 
 ### Get the weather by coordinates
 
-Weather stations is the closest one
 ```python
 import fmi_weather_client
 
 weather = fmi_weather_client.weather_by_coordinates(63.361604, 27.392607)
 ```
 
-If there are no stations within 50 km, the following exception is thrown:
+Returned data is from the closest weather station. Just like with place name search, station might return very little
+data or nothing at all. If there are no stations within 50 km or weather data is not available, the following exception
+is thrown:
 ```
 fmi_weather_client.errors.NoWeatherDataError
 ```
@@ -80,6 +85,7 @@ print('Temperature: %s' % weather.temperature)
 
 # Output: Temperature: 1.4 °C
 ```
+
 
 ## Development
 

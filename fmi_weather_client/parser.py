@@ -1,8 +1,7 @@
 import math
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
-
 import xmltodict
 
 from fmi_weather_client import errors, models, utils
@@ -37,6 +36,10 @@ def parse_weather_data(response,
     if lat is not None and lon is not None:
         closest_measurement_data = _get_closest_measurements(lat, lon, all_measurements)
 
+    # It is possible that name search or closest station provides no data. Throw an error in that case.
+    if len(closest_measurement_data['measurements']) == 0:
+        raise errors.NoWeatherDataError
+
     latest_measurement = closest_measurement_data['measurements'][-1]
 
     return models.Weather(closest_measurement_data['station']['name'],
@@ -58,8 +61,8 @@ def _try_get_stations(data):
         position = station_data['gml:Point']['gml:pos'].split(' ', 1)
         return {
             'name': name,
-            'lon': float(position[0]),
-            'lat': float(position[1])
+            'lat': float(position[0]),
+            'lon': float(position[1])
         }
 
     stations = []
@@ -119,9 +122,9 @@ def _try_get_measurements(data):
 
         # Measurement time data. Values are added next.
         measurement = {
-            'lon': float(time_parts[0]),
-            'lat': float(time_parts[1]),
-            'timestamp': datetime.utcfromtimestamp(int(time_parts[3]))
+            'lat': float(time_parts[0]),
+            'lon': float(time_parts[1]),
+            'timestamp': datetime.utcfromtimestamp(int(time_parts[3])).replace(tzinfo=timezone.utc)
         }
 
         # Measurement value data
@@ -129,7 +132,8 @@ def _try_get_measurements(data):
         for value_idx, value in enumerate(measurement_value_data.strip().split(' ')):
             values[measurement_types[value_idx]] = float(value)
 
-        if utils.is_valid_observation(values):
+        # Sometimes the latest observation contains just NaN values. Ignore those.
+        if utils.is_non_empty_observation(values):
             measurement.update(values)
             measurements.append(measurement)
 
