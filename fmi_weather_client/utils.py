@@ -14,19 +14,13 @@ def is_float(v):
         return False
 
 
-def is_valid_observation(observations):
+def is_non_empty_observation(observation):
     """
-    Validate if observation is valid
-    :param observations: Observations
-    :return: True if observation is valid; False otherwise
+    Validate if observation contains proper values
+    :param observation: Observation dictionary
+    :return: True if observation is not empty; False otherwise
     """
-    # Temperature is required
-    if math.isnan(observations.get('t2m', 'nan')):
-        return False
-
-    valid_value_count = 0
-    for k, v in observations.items():
-        if not math.isnan(v):
-            valid_value_count += 1
-
-    return valid_value_count > 2
+    for _, value in observation.items():
+        if not math.isnan(value):
+            return True
+    return False

@@ -39,7 +39,7 @@ def weather_by_place_name(name: str):
     """
     Get the latest weather information by place name.
 
-    Search relies of FMI's own serviec. Observations are from the past hour.
+    Search relies of FMI's own service. Observations are from the past hour.
 
     :param name: Place name (e.g. Kaisaniemi,Helsinki)
     :return: Latest weather information from the closest weather station

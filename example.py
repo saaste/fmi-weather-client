@@ -17,8 +17,8 @@ def print_weather(weather):
     print('Cloud coverage: %s' % weather.cloud_coverage)
 
 
-weather = fmi_weather_client.weather_by_coordinates(67.2463, 23.6659)
-weather2 = fmi_weather_client.weather_by_place_name("Iisalmi")
+weather = fmi_weather_client.weather_by_coordinates(60.170998, 24.941325)
+weather2 = fmi_weather_client.weather_by_place_name("Kuopio")
 
 print_weather(weather)
 print('')

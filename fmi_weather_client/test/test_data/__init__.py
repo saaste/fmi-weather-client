@@ -18,6 +18,10 @@ def mock_empty_response(*args, **kwargs):
     return __mock_response('empty_response.xml', args, kwargs)
 
 
+def mock_nan_response(*args, **kwargs):
+    return __mock_response('nan_response.xml', args, kwargs)
+
+
 def mock_no_location_exception_response(*args, **kwargs):
     return __mock_response('exception_no_locations_response.xml', args, kwargs)
 
