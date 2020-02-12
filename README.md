@@ -10,6 +10,9 @@ Library for fetching weather information from
 Originally build for personal use because I wanted to create FMI integration for
 [Home Assistant](https://www.home-assistant.io/).
 
+**BETA WARNING!** This is still under heavy development. The public API is not stable yet so DO NOT consider it to be
+stable. Any version can have breaking changes. 
+
 ## How to use
 
 Working example can be found in [example.py](example.py).
