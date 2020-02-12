@@ -1,15 +1,19 @@
 import math
 import sys
 from datetime import datetime, timezone
+from typing import Dict, Any, List
 from typing import Optional
+
 import xmltodict
 
-from fmi_weather_client import errors, models, utils
+from fmi_weather_client import errors, utils
+from fmi_weather_client.models import FMIStation, FMIObservation, FMIStationObservation, Weather
+from requests.models import Response
 
 
-def parse_weather_data(response,
+def parse_weather_data(response: Response,
                        lat: Optional[float] = None,
-                       lon: Optional[float] = None):
+                       lon: Optional[float] = None) -> Weather:
     """
     Parse weather information from FMI response
     :param response: HTTP response
@@ -28,27 +32,27 @@ def parse_weather_data(response,
     if 'wfs:member' not in data['wfs:FeatureCollection'].keys():
         raise errors.NoWeatherDataError
 
-    all_measurements = _try_get_measurements_per_station(data)
+    all_observations = _get_observations_per_station(data)
 
     # Weather by place name return only one station data so let's use it as a default because why not
-    closest_measurement_data = all_measurements[0]
+    closest_observation_set = all_observations[0]
 
     if lat is not None and lon is not None:
-        closest_measurement_data = _get_closest_measurements(lat, lon, all_measurements)
+        closest_observation_set = _get_closest_station_observations(lat, lon, all_observations)
 
     # It is possible that name search or closest station provides no data. Throw an error in that case.
-    if len(closest_measurement_data['measurements']) == 0:
+    if len(closest_observation_set.observations) == 0:
         raise errors.NoWeatherDataError
 
-    latest_measurement = closest_measurement_data['measurements'][-1]
+    latest_observation = closest_observation_set.observations[-1]
 
-    return models.Weather(closest_measurement_data['station']['name'],
-                          closest_measurement_data['station']['lat'],
-                          closest_measurement_data['station']['lon'],
-                          latest_measurement)
+    return Weather(closest_observation_set.station.name,
+                   closest_observation_set.station.lat,
+                   closest_observation_set.station.lon,
+                   latest_observation)
 
 
-def _try_get_stations(data):
+def _get_stations(data: Dict[str, Any]) -> List[FMIStation]:
     """
     Try to get station data from the response. When call is made with place name, there is only one
     station available. For coordinate search there might be more.
@@ -56,14 +60,12 @@ def _try_get_stations(data):
     :return: List of stations
     """
 
-    def parse_station_data(station_data):
+    def parse_station_data(station_data: Dict[str, Any]) -> FMIStation:
         name = station_data['gml:Point']['gml:name']
         position = station_data['gml:Point']['gml:pos'].split(' ', 1)
-        return {
-            'name': name,
-            'lat': float(position[0]),
-            'lon': float(position[1])
-        }
+        return FMIStation(name,
+                          float(position[0]),
+                          float(position[1]))
 
     stations = []
     stations_dict = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']
@@ -81,108 +83,105 @@ def _try_get_stations(data):
     return stations
 
 
-def _try_get_observation_types(data):
+def _get_observation_types(data: Dict[str, Any]) -> List[str]:
     """
     Try to get available observation types (temperature, pressure etc) from the response.
     Available types depends on the available stations.
     :param data: Response data from FMI as xmltodict object
-    :return: List of measurement types
+    :return: List of observation types
     """
-    measurement_types = []
-    measurement_types_dicts = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']['om:result']
-                               ['gmlcov:MultiPointCoverage']['gmlcov:rangeType']['swe:DataRecord']['swe:field'])
-    for measurement_type_dict in measurement_types_dicts:
-        measurement_types.append(measurement_type_dict['@name'])
-    return measurement_types
+    observation_types = []
+    observation_types_data = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']['om:result']
+                              ['gmlcov:MultiPointCoverage']['gmlcov:rangeType']['swe:DataRecord']['swe:field'])
+    for observation_type in observation_types_data:
+        observation_types.append(observation_type['@name'])
+    return observation_types
 
 
-def _try_get_measurements(data):
-    measurement_types = _try_get_observation_types(data)
+def _get_observations(data: Dict[str, Any]) -> List[FMIObservation]:
+    observation_types = _get_observation_types(data)
 
-    # Get measurement times and values for matching. They are different elements in XML but the amount of
+    # Get observation times and values for matching. They are different elements in XML but the amount of
     # data points should be the same so times and values can be matched.
     #
     # Time data format is always the same and fields are separated by space:
     # station_longitude station_latitude unix_timestamp
     #
-    # Values are also separated by space but number of fields depends on the different measurements stations provide.
-    # The number of fields should be the same as number of available measurement types so these two can be matched.
+    # Values are also separated by space but number of fields depends on the different variables stations provide.
+    # The number of fields should be the same as number of available observation types so these two can be matched.
     #
-    measurement_times_array = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']['om:result']
-                               ['gmlcov:MultiPointCoverage']['gml:domainSet']['gmlcov:SimpleMultiPoint']
-                               ['gmlcov:positions'].split('\n'))
-    measurement_values_arrays = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']['om:result']
-                                 ['gmlcov:MultiPointCoverage']['gml:rangeSet']['gml:DataBlock']
-                                 ['gml:doubleOrNilReasonTupleList'].split('\n'))
+    observation_times_list = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']['om:result']
+                              ['gmlcov:MultiPointCoverage']['gml:domainSet']['gmlcov:SimpleMultiPoint']
+                              ['gmlcov:positions'].split('\n'))
+    observation_values_list = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']['om:result']
+                               ['gmlcov:MultiPointCoverage']['gml:rangeSet']['gml:DataBlock']
+                               ['gml:doubleOrNilReasonTupleList'].split('\n'))
 
-    measurements = []
-    for idx, measurement_time_data in enumerate(measurement_times_array):
-        measurement_value_data = measurement_values_arrays[idx]
-        time_parts = measurement_time_data.strip().split(' ')
+    observations = []
+    for idx, observation_time_data in enumerate(observation_times_list):
+        observation_value_data = observation_values_list[idx]
+        time_parts = observation_time_data.strip().split(' ')
 
-        # Measurement time data. Values are added next.
-        measurement = {
-            'lat': float(time_parts[0]),
-            'lon': float(time_parts[1]),
-            'timestamp': datetime.utcfromtimestamp(int(time_parts[3])).replace(tzinfo=timezone.utc)
-        }
+        # Observation time data. Values are added next.
+        observation = FMIObservation(
+            datetime.utcfromtimestamp(int(time_parts[3])).replace(tzinfo=timezone.utc),
+            float(time_parts[0]),
+            float(time_parts[1])
+        )
 
-        # Measurement value data
-        values = {}
-        for value_idx, value in enumerate(measurement_value_data.strip().split(' ')):
-            values[measurement_types[value_idx]] = float(value)
+        # Observation variables (temperature, pressure etc..)
+        for value_idx, value in enumerate(observation_value_data.strip().split(' ')):
+            observation.variables[observation_types[value_idx]] = utils.float_or_none(value)
 
         # Sometimes the latest observation contains just NaN values. Ignore those.
-        if utils.is_non_empty_observation(values):
-            measurement.update(values)
-            measurements.append(measurement)
+        if utils.is_non_empty_observation(observation):
+            observations.append(observation)
 
-    return measurements
+    return observations
 
 
-def _try_get_measurements_per_station(data):
+def _get_observations_per_station(data: Dict[str, Any]) -> List[FMIStationObservation]:
     """
     This is where the magic happens. It gets all the necessary information from the FMI response combines it
     into one array of dictionaries
     :param data: Response data from FMI as xmltodict object
-    :return: List of available measurements from one or more weather stations
+    :return: List of available observations from one or more weather stations
     """
     output = []
 
-    stations = _try_get_stations(data)
-    measurements = _try_get_measurements(data)
+    stations = _get_stations(data)
+    observations = _get_observations(data)
 
-    # Measurements are matched with stations using coordinates. [wtf.gif]
-    # Since measurements are ordered by coordinates, let's match them in a simple for-loop instead of trying
+    # Observations are matched with stations using coordinates. [wtf.gif]
+    # Since observations are ordered by coordinates, let's match them in a simple for-loop instead of trying
     # to do a pointless optimization with dictionaries ;)
     for station in stations:
-        station_measurements = []
-        for measurement in measurements:
-            if station['lat'] == measurement['lat'] and station['lon'] == measurement['lon']:
-                station_measurements.append(measurement)
+        station_observations = []
+        for observation in observations:
+            if station.lat == observation.lat and station.lon == observation.lon:
+                station_observations.append(observation)
 
-        output.append({
-            'station': station,
-            'measurements': station_measurements
-        })
+        output.append(FMIStationObservation(station, station_observations))
 
     return output
 
 
-def _get_closest_measurements(lat, lon, measurements):
+def _get_closest_station_observations(lat: float,
+                                      lon: float,
+                                      s_observations: List[FMIStationObservation]) -> Optional[FMIStationObservation]:
     """
-    Get measurements from the closest station
+    Get observations from the closest station
     :param lat: Latitude
     :param lon: Longitude
-    :param measurements: Measurements from all stations
-    :return: Measurements from the closes weather station
+    :param s_observations: Observations from all stations
+    :return: Observations from the closest weather station
     """
-    closest_distance = sys.maxsize
-    closest_measurement = None
-    for measurement in measurements:
-        station = measurement['station']
-        distance = math.sqrt(((lat - float(station['lat'])) ** 2) + ((lon - float(station['lon'])) ** 2))
-        if distance < closest_distance:
-            closest_measurement = measurement
-            closest_distance = distance
-    return closest_measurement
+    min_distance = sys.maxsize
+    closest = None
+    for station_observation in s_observations:
+        station = station_observation.station
+        distance = math.sqrt(((lat - float(station.lat)) ** 2) + ((lon - float(station.lon)) ** 2))
+        if distance < min_distance:
+            closest = station_observation
+            min_distance = distance
+    return closest

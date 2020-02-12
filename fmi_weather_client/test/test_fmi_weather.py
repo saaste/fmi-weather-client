@@ -12,7 +12,7 @@ class FMIWeatherTest(unittest.TestCase):
     def test_get_weather_by_place(self, mock_get):
         place_weather = fmi_weather_client.weather_by_place_name('Espoo, Tapiola')
         self.assertEqual(place_weather.station_name, 'Espoo Tapiola')
-        self.assertEqual(place_weather.measurement_time.timestamp(), 1581331800.0)
+        self.assertEqual(place_weather.observation_time.timestamp(), 1581331800.0)
         self.assertEqual(place_weather.temperature.value, 3.5)
         self.assertEqual(place_weather.wind_speed.value, 8.9)
 
@@ -20,7 +20,7 @@ class FMIWeatherTest(unittest.TestCase):
     def test_get_weather_by_coordinates(self, mock_get):
         place_weather = fmi_weather_client.weather_by_coordinates(63.14343, 27.31317)
         self.assertEqual(place_weather.station_name, 'Kuopio Maaninka')
-        self.assertEqual(place_weather.measurement_time.timestamp(), 1581331800.0)
+        self.assertEqual(place_weather.observation_time.timestamp(), 1581331800.0)
         self.assertEqual(place_weather.temperature.value, 2.5)
         self.assertEqual(place_weather.wind_speed.value, 5.3)
 

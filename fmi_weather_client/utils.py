@@ -1,26 +1,31 @@
 import math
+from typing import Optional, Any
+
+from fmi_weather_client.models import FMIObservation
 
 
-def is_float(v):
+def float_or_none(v: Any) -> Optional[float]:
     """
-    Validate if value is float and not a NaN
+    Get value as float. None if conversion fails.
     :param v: Any value
-    :return: True if value is valid; False otherwise
+    :return: Value as float if successful; None otherwise
     """
     try:
         f = float(v)
-        return not math.isnan(f)
+        if not math.isnan(f):
+            return f
+        return None
     except (ValueError, TypeError):
-        return False
+        return None
 
 
-def is_non_empty_observation(observation):
+def is_non_empty_observation(observation: FMIObservation) -> bool:
     """
     Validate if observation contains proper values
-    :param observation: Observation dictionary
+    :param observation: Observation
     :return: True if observation is not empty; False otherwise
     """
-    for _, value in observation.items():
-        if not math.isnan(value):
+    for _, value in observation.variables.items():
+        if value is not None:
             return True
     return False

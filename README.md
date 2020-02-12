@@ -78,7 +78,7 @@ Available weather information depends on the weather station. Currently supporte
   - 4.0 means half cloudy
   - 8.0 means overcast
 
-Observation data contains two fields: `value` and `unit`. You can also just print the measurement object to get a string
+Observation data contains two fields: `value` and `unit`. You can also just print the observation object to get a string
 representation:
 ```python
 print('Temperature: %s' % weather.temperature)

@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import requests
 
 from fmi_weather_client import parser
+from fmi_weather_client.models import Weather
 
 _BASE_URL = 'http://opendata.fmi.fi/wfs'
 
@@ -15,7 +16,7 @@ _DEFAULT_PARAMS = {
 }
 
 
-def weather_by_coordinates(lat: float, lon: float):
+def weather_by_coordinates(lat: float, lon: float) -> Weather:
     """
     Get the latest weather information by coordinates.
 
@@ -35,7 +36,7 @@ def weather_by_coordinates(lat: float, lon: float):
     return parser.parse_weather_data(response, lat, lon)
 
 
-def weather_by_place_name(name: str):
+def weather_by_place_name(name: str) -> Weather:
     """
     Get the latest weather information by place name.
 
