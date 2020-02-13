@@ -1,5 +1,6 @@
 ![Test](https://github.com/saaste/fmi-weather-client/workflows/tests/badge.svg?branch=master)
 ![Last commit](https://img.shields.io/github/last-commit/saaste/fmi-weather-client)
+![Latest version in GitHub](https://img.shields.io/github/v/release/saaste/fmi-weather-client?include_prereleases)
 ![Latest version in PyPi](https://img.shields.io/pypi/v/fmi-weather-client)
 
 # Finnish Meteorological Institute Weather
