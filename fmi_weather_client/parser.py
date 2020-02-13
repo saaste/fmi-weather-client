@@ -8,20 +8,19 @@ import xmltodict
 
 from fmi_weather_client import errors, utils
 from fmi_weather_client.models import FMIStation, FMIObservation, FMIStationObservation, Weather
-from requests.models import Response
 
 
-def parse_weather_data(response: Response,
+def parse_weather_data(body: str,
                        lat: Optional[float] = None,
                        lon: Optional[float] = None) -> Weather:
     """
     Parse weather information from FMI response
-    :param response: HTTP response
+    :param body: HTTP response body from FMI
     :param lat: latitude
     :param lon: longitude
     :return: Weather information
     """
-    data = xmltodict.parse(response.text)
+    data = xmltodict.parse(body)
 
     # Check exception response
     if 'ExceptionReport' in data.keys():
