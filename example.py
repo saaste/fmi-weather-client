@@ -3,7 +3,7 @@ import fmi_weather_client
 
 def print_weather(weather):
     print(weather.station_name)
-    print(weather.measurement_time)
+    print(weather.observation_time)
     print('Temperature: %s' % weather.temperature)
     print('Dew point: %s' % weather.dew_point)
     print('Humidity: %s' % weather.humidity)

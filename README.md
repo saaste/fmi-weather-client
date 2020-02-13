@@ -10,6 +10,9 @@ Library for fetching weather information from
 Originally build for personal use because I wanted to create FMI integration for
 [Home Assistant](https://www.home-assistant.io/).
 
+**BETA WARNING!** This is still under heavy development. The public API is not stable yet so DO NOT consider it to be
+stable. Any version can have breaking changes. 
+
 ## How to use
 
 Working example can be found in [example.py](example.py).
@@ -78,7 +81,7 @@ Available weather information depends on the weather station. Currently supporte
   - 4.0 means half cloudy
   - 8.0 means overcast
 
-Observation data contains two fields: `value` and `unit`. You can also just print the measurement object to get a string
+Observation data contains two fields: `value` and `unit`. You can also just print the observation object to get a string
 representation:
 ```python
 print('Temperature: %s' % weather.temperature)
