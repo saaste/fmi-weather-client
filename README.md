@@ -62,7 +62,7 @@ Available weather information depends on the weather station. Currently supporte
 - Station name
 - Station latitude
 - Station longitude
-- Measurement time
+- Observation time
 - Temperature (°C)
 - Humidity (%)
 - Wind speed (m/s)
