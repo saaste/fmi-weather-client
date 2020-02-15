@@ -23,7 +23,7 @@ Working example can be found in [example.py](example.py).
 $ pip install fmi-weather-client 
 ```
 
-### Get the weather by place name
+### Get a weather by place name
 
 ```python
 import fmi_weather_client
@@ -41,7 +41,7 @@ If place name is not known or weather data is not available, the following excep
 fmi_weather_client.errors.NoWeatherDataError
 ```
 
-### Get the weather by coordinates
+### Get a weather by coordinates
 
 ```python
 import fmi_weather_client
@@ -50,8 +50,26 @@ weather = fmi_weather_client.weather_by_coordinates(63.361604, 27.392607)
 ```
 
 Returned data is from the closest weather station. Just like with place name search, station might return very little
-data or nothing at all. If there are no stations within 50 km or weather data is not available, the following exception
+data or nothing at all. If there are no stations within 90 km or weather data is not available, the following exception
 is thrown:
+```
+fmi_weather_client.errors.NoWeatherDataError
+```
+
+### Get a combination weather
+
+```python
+import fmi_weather_client
+
+weather = fmi_weather_client.weather_multi_station(69.016989, 21.465569)
+```
+
+Returned data is combination of multiple stations. Closest station is checked first and
+if some variables are missing, next station is checked. This way it is likely to get all
+variables it is possible that some data comes from a station that is quite far away. 
+
+Returned station name and observation time is always the closest station. If there are no stations within 90 km or
+weather data is not available, the following exception is thrown:
 ```
 fmi_weather_client.errors.NoWeatherDataError
 ```
