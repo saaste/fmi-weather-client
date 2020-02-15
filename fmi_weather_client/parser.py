@@ -20,17 +20,7 @@ def parse_weather_data(body: str,
     :param lon: longitude
     :return: Weather information
     """
-    data = xmltodict.parse(body)
-
-    # Check exception response
-    if 'ExceptionReport' in data.keys():
-        if 'No locations found for the place' in data['ExceptionReport']['Exception']['ExceptionText'][0]:
-            raise errors.NoWeatherDataError
-        raise errors.ServiceError(data['ExceptionReport']['Exception']['ExceptionText'][0])
-
-    if 'wfs:member' not in data['wfs:FeatureCollection'].keys():
-        raise errors.NoWeatherDataError
-
+    data = _body_to_dict(body)
     all_observations = _get_observations_per_station(data)
 
     # Weather by place name return only one station data so let's use it as a default because why not
@@ -49,6 +39,57 @@ def parse_weather_data(body: str,
                    closest_observation_set.station.lat,
                    closest_observation_set.station.lon,
                    latest_observation)
+
+
+def parse_multi_weather_data(body: str,
+                             lat: float,
+                             lon: float) -> Weather:
+    """
+    Parse weather information from FMI response
+    :param body: HTTP response body from FMI
+    :param lat: latitude
+    :param lon: longitude
+    :return: Weather information
+    """
+    data = _body_to_dict(body)
+    all_observations = _get_observations_per_station(data)
+    sorted_observation_set = _get_observations_sorted_by_distance(lat, lon, all_observations)
+
+    closest_station = sorted_observation_set[0].station
+    latest_observation = sorted_observation_set[0].observations[-1].timestamp
+
+    observations = FMIObservation(latest_observation, lat, lon)
+    for station_observation in sorted_observation_set:
+        if len(station_observation.observations) > 0:
+            latest_variables = station_observation.observations[-1].variables
+            for variable_name, value in latest_variables.items():
+                if observations.variables.get(variable_name, None) is None and value is not None:
+                    observations.variables[variable_name] = value
+
+    return Weather(closest_station.name,
+                   closest_station.lat,
+                   closest_station.lon,
+                   observations)
+
+
+def _body_to_dict(body: str) -> Dict[str, Any]:
+    """
+    Convert FMI response body to dictionary and check errors
+    :param body: FMI response body
+    :return: Response as dictionary
+    """
+    data = xmltodict.parse(body)
+
+    # Check exception response
+    if 'ExceptionReport' in data.keys():
+        if 'No locations found for the place' in data['ExceptionReport']['Exception']['ExceptionText'][0]:
+            raise errors.NoWeatherDataError
+        raise errors.ServiceError(data['ExceptionReport']['Exception']['ExceptionText'][0])
+
+    if 'wfs:member' not in data['wfs:FeatureCollection'].keys():
+        raise errors.NoWeatherDataError
+
+    return data
 
 
 def _get_stations(data: Dict[str, Any]) -> List[FMIStation]:
@@ -184,3 +225,18 @@ def _get_closest_station_observations(lat: float,
             closest = station_observation
             min_distance = distance
     return closest
+
+
+def _get_observations_sorted_by_distance(lat: float,
+                                         lon: float,
+                                         s_observations: List[FMIStationObservation]) -> List[FMIStationObservation]:
+    """
+    Sort observations by distance (closest first)
+    :param lat: latitude
+    :param lon: longitude
+    :param s_observations: Observations
+    :return: Observations
+    """
+    return sorted(s_observations,
+                  key=lambda o: math.sqrt(((lat - float(o.station.lat)) ** 2) + ((lon - float(o.station.lon)) ** 2)),
+                  reverse=False)
