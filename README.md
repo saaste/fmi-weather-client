@@ -80,6 +80,8 @@ Available weather information depends on the weather station. Currently supporte
   - 0.0 means no clouds
   - 4.0 means half cloudy
   - 8.0 means overcast
+- Snow depth (cm)
+- Current weather as WaWa code ([Documentation in Finnish](https://www.ilmatieteenlaitos.fi/latauspalvelun-pikaohje))
 
 Observation data contains two fields: `value` and `unit`. You can also just print the observation object to get a string
 representation:

@@ -40,6 +40,8 @@ class FMIWeatherTest(unittest.TestCase):
         self.assertEqual(place_weather.pressure.value, 963.2)
         self.assertEqual(place_weather.visibility.value, 19967.0)
         self.assertEqual(place_weather.cloud_coverage.value, 8.0)
+        self.assertEqual(place_weather.snow_depth.value, 16.0)
+        self.assertEqual(place_weather.wawa.value, 81.0)
 
     @mock.patch('requests.get', side_effect=test_data.mock_empty_response)
     def test_empty_response(self, mock_get):

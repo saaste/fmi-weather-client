@@ -15,6 +15,8 @@ def print_weather(weather):
     print('Pressure: %s' % weather.pressure)
     print('Visibility: %s' % weather.visibility)
     print('Cloud coverage: %s' % weather.cloud_coverage)
+    print('Snow depth: %s' % weather.snow_depth)
+    print('WaWa code: %s', weather.wawa)
 
 
 weather = fmi_weather_client.weather_by_coordinates(60.170998, 24.941325)

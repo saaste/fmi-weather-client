@@ -57,6 +57,9 @@ class Weather:
         self.pressure: Optional[WeatherMeasurement] = try_get_value(observation, 'p_sea', 'hPa')
         self.visibility: Optional[WeatherMeasurement] = try_get_value(observation, 'vis', 'm')
         self.cloud_coverage: Optional[WeatherMeasurement] = try_get_value(observation, 'n_man', '1/8')
+        self.snow_depth: Optional[WeatherMeasurement] = try_get_value(observation, 'snow_aws', 'cm')
+        # Current weather code (In Finnish: https://www.ilmatieteenlaitos.fi/latauspalvelun-pikaohje)
+        self.wawa: Optional[WeatherMeasurement] = try_get_value(observation, 'wawa', '')
 
         # TODO: Support wawa
         # https://helda.helsinki.fi/bitstream/handle/10138/37284/PRO_GRADU_BOOK_HERMAN.pdf?sequence=2
