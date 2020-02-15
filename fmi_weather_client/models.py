@@ -60,6 +60,3 @@ class Weather:
         self.snow_depth: Optional[WeatherMeasurement] = try_get_value(observation, 'snow_aws', 'cm')
         # Current weather code (In Finnish: https://www.ilmatieteenlaitos.fi/latauspalvelun-pikaohje)
         self.wawa: Optional[WeatherMeasurement] = try_get_value(observation, 'wawa', '')
-
-        # TODO: Support wawa
-        # https://helda.helsinki.fi/bitstream/handle/10138/37284/PRO_GRADU_BOOK_HERMAN.pdf?sequence=2
