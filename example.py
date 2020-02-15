@@ -19,7 +19,10 @@ def print_weather(weather):
 
 weather = fmi_weather_client.weather_by_coordinates(60.170998, 24.941325)
 weather2 = fmi_weather_client.weather_by_place_name("Kuopio")
+weather3 = fmi_weather_client.weather_multi_station(69.016989, 21.465569)
 
 print_weather(weather)
 print('')
 print_weather(weather2)
+print('')
+print_weather(weather3)

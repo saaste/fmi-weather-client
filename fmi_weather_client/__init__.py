@@ -25,14 +25,14 @@ def weather_by_coordinates(lat: float, lon: float) -> Weather:
     """
     Get the latest weather information by coordinates.
 
-    110 km x 110 km bounding box used to search the closest weather station. Observations are from the past hour.
+    180 km x 180 km bounding box used to search the closest weather station. Observations are from the past hour.
 
     :param lat: Latitude (e.g. 25.67087)
     :param lon: Longitude (e.g. 62.39758)
     :return: Latest weather information from the closest weather station
     """
     params = {
-        'bbox': '%s,%s,%s,%s' % (lon - 0.5, lat - 0.5, lon + 0.5, lat + 0.5),
+        'bbox': '%s,%s,%s,%s' % (lon - 0.8, lat - 0.8, lon + 0.8, lat + 0.8),
         'starttime': (datetime.utcnow() + timedelta(hours=-1)).isoformat(timespec='seconds')
     }
     response = _request_fmi(params)
@@ -54,6 +54,21 @@ def weather_by_place_name(name: str) -> Weather:
     }
     response = _request_fmi(params)
     return parser.parse_weather_data(response)
+
+
+def weather_multi_station(lat: float, lon: float) -> Weather:
+    """
+    Get the latest full weather by combining data from multiple weather stations
+    :param lat: Latitude
+    :param lon: Longitude
+    :return: Latest weather information from multiple weather stations
+    """
+    params = {
+        'bbox': '%s,%s,%s,%s' % (lon - 0.8, lat - 0.8, lon + 0.8, lat + 0.8),
+        'starttime': (datetime.utcnow() + timedelta(hours=-1)).isoformat(timespec='seconds')
+    }
+    response = _request_fmi(params)
+    return parser.parse_multi_weather_data(response, lat, lon)
 
 
 def _request_fmi(params: Dict[str, Any]) -> str:
