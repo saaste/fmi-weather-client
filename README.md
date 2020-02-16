@@ -74,6 +74,15 @@ weather data is not available, the following exception is thrown:
 fmi_weather_client.errors.NoWeatherDataError
 ```
 
+### Get a forecast
+You can get the forecast using a place name or coordinates and the behaviour is the same. The code tries to fetch
+the forecast for the next 6 days but looks like FMI provides it only for the next 3. You can also
+define the timestep between forecasts. Default is 24 hours.
+
+```python
+forecast = fmi_weather_client.forecast_by_place_name("Jäppilä, Pieksämäki")
+forecast2 = fmi_weather_client.forecast_by_coordinates(28.62406, 67.6894, timestep_hours=12)
+```
 
 ### Weather data
 Available weather information depends on the weather station. Currently supported fields: 
@@ -109,6 +118,25 @@ print('Temperature: %s' % weather.temperature)
 # Output: Temperature: 1.4 °C
 ```
 
+### Forecast data
+- Geopotential height (m)
+- Temperature (°C)
+- Pressure (hPa)
+- Humidity (%)
+- Wind direction (°)
+- Wind speed (m/s)
+- Wind U component (m/s)
+- Wind V component (m/s)
+- Wind max (m/s)
+- Wind gust (m/s)
+- Dew point (°)
+- Cloud cover (%)
+- Symbol [Documentation in Finnish](https://www.ilmatieteenlaitos.fi/latauspalvelun-pikaohje)
+- Precipitation amount 1h (mm/h)
+- Precipitation amount (mm)
+
+There are also other data regarding cloud coverage, radiation and land-sea mask. I have no idea
+what these really are so it is best to check FMI documentation. 
 
 ## Development
 

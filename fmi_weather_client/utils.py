@@ -1,5 +1,5 @@
 import math
-from typing import Optional, Any
+from typing import Optional, Any, Dict
 
 from fmi_weather_client.models import FMIObservation
 
@@ -28,4 +28,12 @@ def is_non_empty_observation(observation: FMIObservation) -> bool:
     for _, value in observation.variables.items():
         if value is not None:
             return True
+    return False
+
+
+def is_non_empty_forecast(forecast: Dict[str, float]) -> bool:
+    for _, value in forecast.items():
+        if not math.isnan(value):
+            return True
+
     return False
