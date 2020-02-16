@@ -109,8 +109,8 @@ def _get_stations(data: Dict[str, Any]) -> List[FMIStation]:
 
     stations = []
     stations_dict = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']
-                     ['om:featureOfInterest']['sams:SF_SpatialSamplingFeature']['sams:shape']['gml:MultiPoint']
-                     ['gml:pointMember'])
+                         ['om:featureOfInterest']['sams:SF_SpatialSamplingFeature']['sams:shape']
+                         ['gml:MultiPoint']['gml:pointMember'])
 
     # xmltodict can return a list or an object depending on how many child the element has
     if isinstance(stations_dict, list):

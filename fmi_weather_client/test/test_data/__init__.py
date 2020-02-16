@@ -22,6 +22,14 @@ def mock_bbox_response(*args, **kwargs):
     return __mock_response('valid_bbox_response.xml', 200, args, kwargs)
 
 
+def mock_place_forecast_response(*args, **kwargs):
+    return __mock_response('valid_place_forecast_response.xml', 200, args, kwargs)
+
+
+def mock_coordinate_forecast_response(*args, **kwargs):
+    return __mock_response('valid_coordinate_forecast_response.xml', 200, args, kwargs)
+
+
 def mock_empty_response(*args, **kwargs):
     return __mock_response('empty_response.xml', 200, args, kwargs)
 

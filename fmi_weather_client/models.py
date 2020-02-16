@@ -8,6 +8,9 @@ class FMIStation:
         self.lat = lat
         self.lon = lon
 
+    def __str__(self):
+        return "%s (%s, %s)" % (self.name, self.lat, self.lon)
+
 
 class FMIObservation:
     def __init__(self, timestamp: datetime, lat: float, lon: float):
@@ -60,3 +63,73 @@ class Weather:
         self.snow_depth: Optional[WeatherMeasurement] = try_get_value(observation, 'snow_aws', 'cm')
         # Current weather code (In Finnish: https://www.ilmatieteenlaitos.fi/latauspalvelun-pikaohje)
         self.wawa: Optional[WeatherMeasurement] = try_get_value(observation, 'wawa', '')
+
+
+class FMIForecastTime:
+    def __init__(self, lat: float, lon: float, timestamp: datetime):
+        self.lat = lat
+        self.lon = lon
+        self.timestamp = timestamp
+
+    def __str__(self):
+        return "%s, %s, %s" % (self.lat, self.lon, self.timestamp)
+
+
+class FMIForecast:
+    def __init__(self, lat: float, lon: float, timestamp: datetime, values: Dict[str, float]):
+        self.lat = lat
+        self.lon = lon
+        self.timestamp = timestamp
+        self.values = values
+
+
+class ForecastValue:
+    def __init__(self, value: float, unit: str):
+        self.value = value
+        self.unit = unit
+
+    def __str__(self):
+        return "%s %s" % (self.value, self.unit)
+
+
+class ForecastItem:
+    def __init__(self, timestamp: datetime, values: Dict[str, float]):
+
+        def try_get_value(o: Dict[str, float], variable_name: str, unit: str) -> Optional[ForecastValue]:
+            value = o.get(variable_name, None)
+            if value is not None:
+                return ForecastValue(value, unit)
+            return None
+
+        self.timestamp = timestamp
+        self.geopotential_height = try_get_value(values, 'GeopHeight', 'm')
+        self.temperature = try_get_value(values, 'Temperature', '°C')
+        self.pressure = try_get_value(values, 'Pressure', 'hPa')
+        self.humidity = try_get_value(values, 'Humidity', '%')
+        self.wind_direction = try_get_value(values, 'WindDirection', '°')
+        self.wind_speed = try_get_value(values, 'WindSpeedMS', 'm/s')
+        self.wind_u_component = try_get_value(values, 'WindUMS', 'm/s')
+        self.wind_v_component = try_get_value(values, 'WindVMS', 'm/s')
+        self.wind_max = try_get_value(values, 'MaximumWind', 'm/s')
+        self.wind_gust = try_get_value(values, 'WindGust', 'm/s')
+        self.dew_point = try_get_value(values, 'DewPoint', '°')
+        self.cloud_cover = try_get_value(values, 'TotalCloudCover', '%')
+        self.symbol = try_get_value(values, 'WeatherSymbol3', '')
+        self.cloud_low_cover = try_get_value(values, 'LowCloudCover', '%')
+        self.cloud_mid_cover = try_get_value(values, 'MediumCloudCover', '%')
+        self.cloud_high_cover = try_get_value(values, 'HighCloudCover', '%')
+        self.precipitation_amount_1h = try_get_value(values, 'Precipitation1h', 'mm/h')
+        self.precipitation_amount = try_get_value(values, 'PrecipitationAmount', 'mm')
+        self.radiation_global_short_wave_acc = try_get_value(values, 'RadiationGlobalAccumulation', 'J/m²')
+        self.radiation_global_long_wave_acc = try_get_value(values, 'RadiationLWAccumulation', 'J/m²')
+        self.radiation_surface_long_wave_acc = try_get_value(values, 'RadiationNetSurfaceLWAccumulation', 'J/m²')
+        self.radiation_diff_surface_short_wave_acc = try_get_value(values, 'RadiationDiffuseAccumulation', 'J/m²')
+        self.land_sea_mask = try_get_value(values, 'LandSeaMask', '')
+
+
+class Forecast:
+    def __init__(self, place: str, lat: float, lon: float, forecasts: List[ForecastItem]):
+        self.place = place
+        self.lat = lat
+        self.lon = lon
+        self.forecasts = forecasts
