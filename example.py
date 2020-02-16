@@ -45,7 +45,7 @@ weather = fmi_weather_client.weather_by_coordinates(60.170998, 24.941325)
 weather2 = fmi_weather_client.weather_by_place_name("Kuopio")
 weather3 = fmi_weather_client.weather_multi_station(69.016989, 21.465569)
 forecast = fmi_weather_client.forecast_by_place_name("Jäppilä, Pieksämäki")
-forecast2 = fmi_weather_client.forecast_by_coordinates(28.62406, 67.6894)
+forecast2 = fmi_weather_client.forecast_by_coordinates(28.62406, 67.6894, timestep_hours=12)
 
 print_weather(weather)
 print_weather(weather2)
