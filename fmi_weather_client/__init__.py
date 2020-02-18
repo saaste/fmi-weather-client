@@ -1,5 +1,5 @@
-import fmi_weather_client.http as http
-from fmi_weather_client import forecast_parser, weather_parser
+from fmi_weather_client import http
+from fmi_weather_client.parsers import weather as weather_parser, forecast as forecast_parser
 from fmi_weather_client.models import Weather
 
 
