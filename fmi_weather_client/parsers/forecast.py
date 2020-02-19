@@ -58,6 +58,8 @@ def _body_to_dict(body: str) -> Dict[str, Any]:
     if 'ExceptionReport' in data.keys():
         if 'No locations found for the place' in data['ExceptionReport']['Exception']['ExceptionText'][0]:
             raise errors.NoForecastDataError
+        elif 'No data available for' in data['ExceptionReport']['Exception']['ExceptionText'][0]:
+            raise errors.NoForecastDataError
         raise errors.ServiceError(data['ExceptionReport']['Exception']['ExceptionText'][0])
 
     if 'wfs:member' not in data['wfs:FeatureCollection'].keys():

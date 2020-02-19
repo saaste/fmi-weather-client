@@ -77,6 +77,9 @@ def _create_params(stored_query: str,
     :return: Parameters
     """
 
+    if place is None and lat is None and lon is None:
+        raise Exception("Missing location parameter")
+
     # Common parameters for all requests
     params = {
         'service': 'WFS',
@@ -90,21 +93,22 @@ def _create_params(stored_query: str,
     if stored_query == STORED_QUERY_OBSERVATION:
         params['starttime'] = (datetime.utcnow() + timedelta(hours=-1)).isoformat(timespec='seconds')
         params['timestep'] = 10
+        if lat is not None and lon is not None:
+            params['bbox'] = '%s,%s,%s,%s' % (lon - 0.8, lat - 0.8, lon + 0.8, lat + 0.8)
+
     elif stored_query == STORED_QUERY_FORECAST:
         now = datetime.utcnow().replace(tzinfo=timezone.utc)
         params['starttime'] = now.isoformat(timespec='seconds')
         params['endtime'] = (now + timedelta(days=6)).isoformat(timespec='seconds')
-        params['timestamp'] = timestep_hours * 60,
+        params['timestep'] = timestep_hours * 60,
+        if lat is not None and lon is not None:
+            params['latlon'] = '%s,%s' % (lat, lon)
+
     else:
         raise Exception('Unsupported stored query %s' % stored_query)
 
-    # Set location parameter
     if place is not None:
         params['place'] = place.strip().replace(' ', '')
-    elif lat is not None and lon is not None:
-        params['bbox'] = '%s,%s,%s,%s' % (lon - 0.8, lat - 0.8, lon + 0.8, lat + 0.8)
-    else:
-        raise Exception('Location parameter missing')
 
     return params
 
@@ -120,7 +124,7 @@ def _send_request(params: Dict[str, Any]) -> str:
     _LOGGER.debug("Sending GET to %s with parameters: %s", url, params)
     response = requests.get(url, params=params)
 
-    if response.status_code != 200:
+    if response.status_code >= 500:
         raise ServiceError("Invalid FMI service response", {'status_code': response.status_code, 'body': response.text})
 
     _LOGGER.debug("Received a response from FMI in %s ms", response.elapsed.microseconds / 1000)
