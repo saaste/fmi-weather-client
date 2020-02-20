@@ -149,22 +149,16 @@ $ source venv/bin/activate
 
 Install required packages
 ```
-$ python -m pip install -r requirements.txt
-$ python -m pip install -r requirements-dev.txt
+$ make setup-dev-env
 ```
 
-When you stop working, deactivate virtual environment
+Deactivate virtual environment when you are done
 ```
 $ deactivate
 ```
 
 ### Run tests
+This will run unit tests and code quality checks
 ```
-$ pytest
-```
-
-### Run code quality tools
-```
-$ flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude venv
-$ flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127  --exclude venv
+$ make test
 ```
