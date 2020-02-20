@@ -1,10 +1,11 @@
 from datetime import datetime, timezone
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 
 import xmltodict
 
 from fmi_weather_client import errors, utils
-from fmi_weather_client.models import FMIStation, FMIForecastTime, FMIForecast, Forecast, ForecastItem
+from fmi_weather_client.errors import NoDataAvailableError
+from fmi_weather_client.models import FMIForecast, FMIForecastTime, FMIStation, Forecast, WeatherData
 
 
 def parse_forecast(body: str):
@@ -39,7 +40,7 @@ def parse_forecast(body: str):
         for forecast in forecasts:
             if forecast.lat == station.lat and forecast.lon == station.lon and utils.is_non_empty_forecast(
                     forecast.values):
-                station_forecast.forecasts.append(ForecastItem(forecast.timestamp, forecast.values))
+                station_forecast.forecasts.append(WeatherData(forecast.timestamp, forecast.values))
         station_forecasts.append(station_forecast)
 
     # I always saw just one station so I guess this is fine
@@ -57,13 +58,13 @@ def _body_to_dict(body: str) -> Dict[str, Any]:
     # Check exception response
     if 'ExceptionReport' in data.keys():
         if 'No locations found for the place' in data['ExceptionReport']['Exception']['ExceptionText'][0]:
-            raise errors.NoForecastDataError
+            raise errors.NoDataAvailableError
         elif 'No data available for' in data['ExceptionReport']['Exception']['ExceptionText'][0]:
-            raise errors.NoForecastDataError
+            raise errors.NoDataAvailableError
         raise errors.ServiceError(data['ExceptionReport']['Exception']['ExceptionText'][0])
 
     if 'wfs:member' not in data['wfs:FeatureCollection'].keys():
-        raise errors.NoForecastDataError
+        raise errors.NoDataAvailableError
 
     return data
 
@@ -132,11 +133,19 @@ def _get_forecast_variable_values(data: Dict[str, Any]) -> List[List[float]]:
                            ['om:result']['gmlcov:MultiPointCoverage']['gml:rangeSet']['gml:DataBlock']
                            ['gml:doubleOrNilReasonTupleList'].split('\n'))
 
+    contains_values = False
+
     for forecast_value_set in forecast_value_sets:
         forecast_values = forecast_value_set.strip().split(' ')
         value_set = []
         for value in forecast_values:
             value_set.append(float(value))
+            if not contains_values and utils.float_or_none(value) is not None:
+                contains_values = True
+
         result.append(value_set)
+
+    if not contains_values:
+        raise NoDataAvailableError
 
     return result

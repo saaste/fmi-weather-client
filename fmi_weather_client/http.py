@@ -8,7 +8,6 @@ from fmi_weather_client.errors import ServiceError
 
 _LOGGER = logging.getLogger(__name__)
 
-STORED_QUERY_OBSERVATION = 'fmi::observations::weather::multipointcoverage'
 STORED_QUERY_FORECAST = 'fmi::forecast::hirlam::surface::point::multipointcoverage'
 
 
@@ -16,13 +15,13 @@ def request_observations_by_coordinates(lat: float, lon: float) -> str:
     """
     Get the latest weather information by coordinates.
 
-    180 km x 180 km bounding box used to search the closest weather station. Observations are from the past hour.
-
     :param lat: Latitude (e.g. 25.67087)
     :param lon: Longitude (e.g. 62.39758)
-    :return: Latest weather information from the closest weather station
+    :return: Latest weather information
     """
-    params = _create_params(stored_query=STORED_QUERY_OBSERVATION, lat=lat, lon=lon)
+    end_time = datetime.utcnow().replace(tzinfo=timezone.utc)
+    start_time = end_time - timedelta(minutes=10)
+    params = _create_params(start_time, end_time, 10, lat=lat, lon=lon)
     return _send_request(params)
 
 
@@ -30,47 +29,57 @@ def request_observations_by_place(place: str) -> str:
     """
     Get the latest weather information by place name.
 
-    Search relies of FMI's own service. Observations are from the past hour.
-
-    :param place: Place name (e.g. Kaisaniemi,Helsinki)
-    :return: Latest weather information from the closest weather station
+    :param place: Place name (e.g. Kaisaniemi, Helsinki)
+    :return: Latest weather information
     """
-    params = _create_params(stored_query=STORED_QUERY_OBSERVATION, place=place)
+    end_time = datetime.utcnow().replace(tzinfo=timezone.utc)
+    start_time = end_time - timedelta(minutes=10)
+    params = _create_params(start_time, end_time, 10, place=place)
     return _send_request(params)
 
 
 def request_forecast_by_coordinates(lat: float, lon: float, timestep_hours: int = 24) -> str:
     """
     Get the latest forecast by place coordinates
+
     :param lat: Latitude (e.g. 25.67087)
     :param lon: Longitude (e.g. 62.39758)
     :param timestep_hours: Forecast steps in hours
     :return: Forecast response
     """
-    params = _create_params(stored_query=STORED_QUERY_FORECAST, timestep_hours=timestep_hours, lat=lat, lon=lon)
+    start_time = datetime.utcnow().replace(tzinfo=timezone.utc)
+    end_time = start_time + timedelta(days=4)
+    timestep = timestep_hours * 60
+    params = _create_params(start_time, end_time, timestep, lat=lat, lon=lon)
     return _send_request(params)
 
 
 def request_forecast_by_place(place: str, timestep_hours: int = 24) -> str:
     """
     Get the latest forecast by place coordinates
+
     :param place: Place name (e.g. Kaisaniemi,Helsinki)
     :param timestep_hours: Forecast steps in hours
     :return: Forecast response
     """
-    params = _create_params(stored_query=STORED_QUERY_FORECAST, timestep_hours=timestep_hours, place=place)
+    start_time = datetime.utcnow().replace(tzinfo=timezone.utc)
+    end_time = start_time + timedelta(days=4)
+    timestep = timestep_hours * 60
+    params = _create_params(start_time, end_time, timestep, place=place)
     return _send_request(params)
 
 
-def _create_params(stored_query: str,
-                   timestep_hours: int = 24,
+def _create_params(start_time: datetime,
+                   end_time: datetime,
+                   timestep_minutes: int,
                    place: Optional[str] = None,
                    lat: Optional[float] = None,
                    lon: Optional[float] = None) -> Dict[str, Any]:
     """
     Create query parameters
-    :param stored_query: Name of the stored query. Use STORED_QUERY_* constants
-    :param timestep_hours: Timestamp hours (used only by forecast)
+    :param start_time: Start datetime
+    :param end_time: End datetime
+    :param timestep_minutes: Timestamp minutes
     :param place: Place name
     :param lat: Latitude
     :param lon: Longitude
@@ -80,32 +89,18 @@ def _create_params(stored_query: str,
     if place is None and lat is None and lon is None:
         raise Exception("Missing location parameter")
 
-    # Common parameters for all requests
     params = {
         'service': 'WFS',
         'version': '2.0.0',
         'request': 'getFeature',
-        'storedquery_id': stored_query,
-        'timestep': '10',
+        'storedquery_id': STORED_QUERY_FORECAST,
+        'timestep': timestep_minutes,
+        'starttime': start_time.isoformat(timespec='seconds'),
+        'endtime': end_time.isoformat(timespec='seconds')
     }
 
-    # Set stored query specific parameters
-    if stored_query == STORED_QUERY_OBSERVATION:
-        params['starttime'] = (datetime.utcnow() + timedelta(hours=-1)).isoformat(timespec='seconds')
-        params['timestep'] = 10
-        if lat is not None and lon is not None:
-            params['bbox'] = '%s,%s,%s,%s' % (lon - 0.8, lat - 0.8, lon + 0.8, lat + 0.8)
-
-    elif stored_query == STORED_QUERY_FORECAST:
-        now = datetime.utcnow().replace(tzinfo=timezone.utc)
-        params['starttime'] = now.isoformat(timespec='seconds')
-        params['endtime'] = (now + timedelta(days=6)).isoformat(timespec='seconds')
-        params['timestep'] = timestep_hours * 60,
-        if lat is not None and lon is not None:
-            params['latlon'] = '%s,%s' % (lat, lon)
-
-    else:
-        raise Exception('Unsupported stored query %s' % stored_query)
+    if lat is not None and lon is not None:
+        params['latlon'] = '%s,%s' % (lat, lon)
 
     if place is not None:
         params['place'] = place.strip().replace(' ', '')

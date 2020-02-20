@@ -1,8 +1,4 @@
-class NoWeatherDataError(Exception):
-    pass
-
-
-class NoForecastDataError(Exception):
+class NoDataAvailableError(Exception):
     pass
 
 
