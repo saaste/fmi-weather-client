@@ -1,7 +1,6 @@
-import math
-from typing import Optional, Any, Dict
+from typing import Any, Dict, Optional
 
-from fmi_weather_client.models import FMIObservation
+import math
 
 
 def float_or_none(v: Any) -> Optional[float]:
@@ -17,18 +16,6 @@ def float_or_none(v: Any) -> Optional[float]:
         return None
     except (ValueError, TypeError):
         return None
-
-
-def is_non_empty_observation(observation: FMIObservation) -> bool:
-    """
-    Validate if observation contains proper values
-    :param observation: Observation
-    :return: True if observation is not empty; False otherwise
-    """
-    for _, value in observation.variables.items():
-        if value is not None:
-            return True
-    return False
 
 
 def is_non_empty_forecast(forecast: Dict[str, float]) -> bool:

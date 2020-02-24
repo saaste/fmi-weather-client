@@ -14,14 +14,6 @@ class MockResponse:
         self.elapsed = MockElapsed()
 
 
-def mock_place_response(*args, **kwargs):
-    return __mock_response('valid_place_response.xml', 200, args, kwargs)
-
-
-def mock_bbox_response(*args, **kwargs):
-    return __mock_response('valid_bbox_response.xml', 200, args, kwargs)
-
-
 def mock_place_forecast_response(*args, **kwargs):
     return __mock_response('valid_place_forecast_response.xml', 200, args, kwargs)
 
