@@ -1,15 +1,15 @@
 from datetime import datetime
-from typing import Optional, List, Dict
+from typing import Dict, List, Optional
 
 
-class FMIStation:
+class FMIPlace:
     def __init__(self, name: str, lat: float, lon: float):
         self.name: str = name
         self.lat: float = lat
         self.lon: float = lon
 
     def __str__(self):
-        return "%s (%s, %s)" % (self.name, self.lat, self.lon)
+        return f"{self.name} ({self.lat}, {self.lon})"
 
 
 class FMIForecastTime:
@@ -19,7 +19,7 @@ class FMIForecastTime:
         self.timestamp: datetime = timestamp
 
     def __str__(self):
-        return "%s, %s, %s" % (self.lat, self.lon, self.timestamp)
+        return f"{self.lat}, {self.lon}, {self.timestamp}"
 
 
 class FMIForecast:
@@ -36,7 +36,7 @@ class Value:
         self.unit: str = unit
 
     def __str__(self):
-        return "%s %s" % (self.value, self.unit)
+        return f"{self.value} {self.unit}"
 
 
 class WeatherData:

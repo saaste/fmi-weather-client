@@ -8,8 +8,6 @@ from fmi_weather_client.errors import ServiceError
 
 _LOGGER = logging.getLogger(__name__)
 
-STORED_QUERY_FORECAST = 'fmi::forecast::hirlam::surface::point::multipointcoverage'
-
 
 def request_observations_by_coordinates(lat: float, lon: float) -> str:
     """
@@ -93,14 +91,14 @@ def _create_params(start_time: datetime,
         'service': 'WFS',
         'version': '2.0.0',
         'request': 'getFeature',
-        'storedquery_id': STORED_QUERY_FORECAST,
+        'storedquery_id': 'fmi::forecast::hirlam::surface::point::multipointcoverage',
         'timestep': timestep_minutes,
         'starttime': start_time.isoformat(timespec='seconds'),
         'endtime': end_time.isoformat(timespec='seconds')
     }
 
     if lat is not None and lon is not None:
-        params['latlon'] = '%s,%s' % (lat, lon)
+        params['latlon'] = f'{lat},{lon}'
 
     if place is not None:
         params['place'] = place.strip().replace(' ', '')
@@ -116,11 +114,11 @@ def _send_request(params: Dict[str, Any]) -> str:
     """
     url = 'http://opendata.fmi.fi/wfs'
 
-    _LOGGER.debug("Sending GET to %s with parameters: %s", url, params)
+    _LOGGER.debug(f"Sending GET to {url} with parameters: {params}")
     response = requests.get(url, params=params)
 
     if response.status_code >= 500:
         raise ServiceError("Invalid FMI service response", {'status_code': response.status_code, 'body': response.text})
 
-    _LOGGER.debug("Received a response from FMI in %s ms", response.elapsed.microseconds / 1000)
+    _LOGGER.debug(f"Received a response from FMI in {response.elapsed.microseconds / 1000} ms", )
     return response.text
