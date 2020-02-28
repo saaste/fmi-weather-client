@@ -31,7 +31,7 @@ class WeatherData:
         self.time: datetime = timestamp
 
         self.temperature: Value = to_value(values, 'Temperature', '°C')
-        self.dew_point: Value = to_value(values, 'DewPoint', '°')
+        self.dew_point: Value = to_value(values, 'DewPoint', '°C')
 
         self.pressure: Value = to_value(values, 'Pressure', 'hPa')
         self.humidity: Value = to_value(values, 'Humidity', '%')
