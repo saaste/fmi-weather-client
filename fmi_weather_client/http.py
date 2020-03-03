@@ -9,7 +9,7 @@ from fmi_weather_client.errors import ServiceError
 _LOGGER = logging.getLogger(__name__)
 
 
-def request_observations_by_coordinates(lat: float, lon: float) -> str:
+def request_weather_by_coordinates(lat: float, lon: float) -> str:
     """
     Get the latest weather information by coordinates.
 
@@ -23,7 +23,7 @@ def request_observations_by_coordinates(lat: float, lon: float) -> str:
     return _send_request(params)
 
 
-def request_observations_by_place(place: str) -> str:
+def request_weather_by_place(place: str) -> str:
     """
     Get the latest weather information by place name.
 

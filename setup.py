@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="fmi-weather-client",
-    version="0.0.9",
+    version="0.0.10",
     author="Mika Hiltunen",
     author_email="saaste@gmail.com",
     description="Library for fetching weather information from Finnish Meteorological Institute (FMI)",
@@ -14,6 +14,7 @@ setuptools.setup(
     url="https://github.com/saaste/fmi-weather-client",
     packages=setuptools.find_packages(),
     install_requires=[
+        'asyncio=>3.4.3',
         'requests>=2.22.0',
         'xmltodict>=0.12.0'
     ],

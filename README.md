@@ -34,6 +34,14 @@ forecast1 = fmi_weather_client.forecast_by_place_name("Jäppilä, Pieksämäki")
 forecast2 = fmi_weather_client.forecast_by_coordinates(67.6894, 28.62406, timestep_hours=12)
 ```
 
+There are also asynchronous versions available:
+```python
+weather1 = await fmi_weather_client.async_weather_by_coordinates(60.170998, 24.941325)
+weather2 = await fmi_weather_client.async_weather_by_place_name("Rastila, Helsinki")
+forecast1 = await fmi_weather_client.async_forecast_by_place_name("Jäppilä, Pieksämäki")
+forecast2 = await fmi_weather_client.async_forecast_by_coordinates(67.6894, 28.62406, timestep_hours=12)
+```
+
 If data is not available, the following exception is thrown:
 ```
 fmi_weather_client.errors.NoWeatherDataError
