@@ -14,7 +14,7 @@ setuptools.setup(
     url="https://github.com/saaste/fmi-weather-client",
     packages=setuptools.find_packages(),
     install_requires=[
-        'asyncio=>3.4.3',
+        'asyncio>=3.4.3',
         'requests>=2.22.0',
         'xmltodict>=0.12.0'
     ],
