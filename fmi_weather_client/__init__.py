@@ -28,10 +28,7 @@ async def async_weather_by_coordinates(lat: float, lon: float) -> Weather:
     :return: Latest weather information
     """
     loop = asyncio.get_event_loop()
-    response = await loop.run_in_executor(None, http.request_weather_by_coordinates, lat, lon)
-    forecast = forecast_parser.parse_forecast(response)
-    weather_state = forecast.forecasts[-1]
-    return Weather(forecast.place, forecast.lat, forecast.lon, weather_state)
+    return await loop.run_in_executor(None, weather_by_coordinates, lat, lon)
 
 
 def weather_by_place_name(name: str) -> Weather:
@@ -55,10 +52,7 @@ async def async_weather_by_place_name(name: str) -> Weather:
     :return: Latest weather information
     """
     loop = asyncio.get_event_loop()
-    response = await loop.run_in_executor(None, http.request_weather_by_place, name)
-    forecast = forecast_parser.parse_forecast(response)
-    weather_state = forecast.forecasts[-1]
-    return Weather(forecast.place, forecast.lat, forecast.lon, weather_state)
+    return await loop.run_in_executor(None, weather_by_place_name, name)
 
 
 def forecast_by_place_name(name: str, timestep_hours: int = 24):
@@ -80,8 +74,7 @@ async def async_forecast_by_place_name(name: str, timestep_hours: int = 24):
     :return: Latest forecast
     """
     loop = asyncio.get_event_loop()
-    response = await loop.run_in_executor(None, http.request_forecast_by_place, name, timestep_hours)
-    return forecast_parser.parse_forecast(response)
+    return await loop.run_in_executor(None, forecast_by_place_name, name, timestep_hours)
 
 
 def forecast_by_coordinates(lat: float, lon: float, timestep_hours: int = 24):
@@ -105,5 +98,4 @@ async def async_forecast_by_coordinates(lat: float, lon: float, timestep_hours: 
     :return: Latest forecast
     """
     loop = asyncio.get_event_loop()
-    response = await loop.run_in_executor(None, http.request_forecast_by_coordinates, lat, lon, timestep_hours)
-    return forecast_parser.parse_forecast(response)
+    return await loop.run_in_executor(None, forecast_by_coordinates, lat, lon, timestep_hours)
