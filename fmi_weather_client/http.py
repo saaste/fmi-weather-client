@@ -11,7 +11,6 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class RequestType(Enum):
-    """Possible request types"""
     WEATHER = 0
     FORECAST = 1
 
@@ -119,11 +118,11 @@ def _send_request(params: Dict[str, Any]) -> str:
     """
     url = 'http://opendata.fmi.fi/wfs'
 
-    _LOGGER.debug("Sending GET to %s with parameters: %s", url, params)
+    _LOGGER.debug(f"Sending GET to {url} with parameters: {params}")
     response = requests.get(url, params=params)
 
     if response.status_code >= 500:
         raise ServiceError("Invalid FMI service response", {'status_code': response.status_code, 'body': response.text})
 
-    _LOGGER.debug("Received a response from FMI in %s ms", response.elapsed.microseconds / 1000)
+    _LOGGER.debug(f"Received a response from FMI in {response.elapsed.microseconds / 1000} ms", )
     return response.text
