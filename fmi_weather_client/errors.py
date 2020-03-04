@@ -1,6 +1,6 @@
 class NoDataAvailableError(Exception):
-    pass
+    """Represents data not available error"""
 
 
 class ServiceError(Exception):
-    pass
+    """Represents unknown FMI service error"""
