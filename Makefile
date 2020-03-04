@@ -12,6 +12,8 @@ test: ## Run tests
 	@pytest
 	@flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude venv
 	@flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127  --exclude venv
+	@pylint fmi_weather_client
+	@pylint fmi_weather_client/parsers
 
 clean: ## Clean build and dist directories
 	@rm -rf ./build ./dist ./fmi_weather_client.egg-info

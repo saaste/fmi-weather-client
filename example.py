@@ -2,10 +2,10 @@ import fmi_weather_client
 from fmi_weather_client.models import Forecast, Weather, WeatherData
 
 
-def print_weather(observation: Weather):
-    print(observation.place)
-    print("Location: %s, %s" % (observation.lat, observation.lon))
-    print_weather_data(observation.data)
+def print_weather(weather: Weather):
+    print(weather.place)
+    print("Location: %s, %s" % (weather.lat, weather.lon))
+    print_weather_data(weather.data)
     print(" ")
 
 
@@ -18,11 +18,11 @@ def print_forecast(station_forecast: Forecast):
 
 
 def print_weather_data(weather: WeatherData):
-    print("  Timestamp: %s" % weather.time)
-    print("  Temperature: %s" % weather.temperature)
-    print("  Humidity: %s" % weather.humidity)
-    print("  Wind speed: %s" % weather.wind_speed)
-    print("  Cloud cover: %s" % weather.cloud_cover)
+    print(f"  Timestamp: {weather.time}")
+    print(f"  Temperature: {weather.temperature}")
+    print(f"  Humidity: {weather.humidity}")
+    print(f"  Wind speed: {weather.wind_speed}")
+    print(f"  Cloud cover: {weather.cloud_cover}")
 
 
 weather1 = fmi_weather_client.weather_by_coordinates(60.170998, 24.941325)
