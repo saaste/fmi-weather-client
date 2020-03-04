@@ -15,7 +15,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=[
         'asyncio>=3.4.3',
-        'requests>=2.22.0',
+        'requests>=2.23.0',
         'xmltodict>=0.12.0'
     ],
     classifiers=[
