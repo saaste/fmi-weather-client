@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wfs:FeatureCollection
-        timeStamp="2020-02-20T19:23:40Z"
+        timeStamp="2020-03-05T18:04:15Z"
         numberMatched="1"
         numberReturned="1"
         xmlns:wfs="http://www.opengis.net/wfs/2.0"
@@ -26,16 +26,16 @@
     http://inspire.ec.europa.eu/schemas/ompr/3.0 http://inspire.ec.europa.eu/schemas/ompr/3.0/Processes.xsd
     http://xml.fmi.fi/namespace/om/atmosphericfeatures/1.0 http://xml.fmi.fi/schema/om/atmosphericfeatures/1.0/atmosphericfeatures.xsd">
     <wfs:member>
-        <omso:GridSeriesObservation gml:id="WFS-0Mg6MCLLZt2d2kUCL2EtGi6._DGJTowuYWbbpdOs2_llx4efR060aeWzDtdOufXlmw48rp1w36d3R0629dnTTw36d3THv7ZeWHPlhaWLLn07qmnbltSfwo2jZx5CY2PlzrUi0Kcd06aMmrhnZd2Spp25bUn8KNoyV.wnBm07sk7Lh5ZefSth2ackhmZ8u_Tk51mOGjNq1ZujXl899_LJf39svLvy09MOLZliaWzL2y7KnnhlqZmzfjw7MtambTfjSV3XpmcNbbh8RNPPph3Y8tK1dCA1tunnz07s9TL46VjTsM5lbd.TLsrM0aeWzDtZXDDyw7a1I.XfwkZdOfR0rWqZdvDLyw9OvLLWhQ5ZefPryy1oSOu3Tk09PNbVfTuyRNPLLj6ad.6tavp3ZKfDLlyTadZ1fTuyVZtOs6vp3ZK02nWtNw.NO3rtr6d2StCvp3ZI_Xn0rQiZe9Dfp3dK3qm_ph2Q9m_rkh7.2XlW5Xy4emjLyp.duLfsZ1tTN_eHs39ckPf2y8q4JuXJp67Yezf1yQ9_bLyrckac.iHs39ckPf2y8q3qHLLj08NPTD0079zHRXNQ5Zcenhp6Yemnfug7d_Xd0r2pYcmnD00790fZvxYdkHHj67euzD00791d1LDk04emnfumV4OPH129dmHpp37qwwqWHJpw9NO_dOy9KfXlmw48syvBx4.u3rsw9NO_dWGFSw5NOHpp37p2XpT68s2HHlp14OPH129dmHpp37q.KWHJpw9NO_dE05s3Xnlg48fXb12YemnfurWmYd2SnlwzcPPW3OfTfyy5OPXLy839OSvMLNt0unWbfyy48PPo6daNPLZh2unXPryzYceV064b9O7o6dbeuzpp4b9O7pj39svLDnytDpp25afTLwnUaHTTty2t.7LWNVqQwA--">
+        <omso:GridSeriesObservation gml:id="WFS-Wi_xjOFCuKQ0zpkKTePcHi4wpgOJTowuYWbbpdOs2_llx4efR060aeWzDtdOufXlmw48rp1w36d3R0629dnTTw36d3THv7ZeWHPlhaWLLn07qmnbltSfwo0bRRtCY2PlzrUi0Kcd06aMmrhnZd2Spp25bUn8KNG0WZRHBm07sk7Lh5ZefSth2ackhmZ8u_Tk51mNmjNo5ZOjXl899_LJf39svLvy09MOLZliaWzL2y7KnnhlqZmzfjw7MtambTfjSV3XpmcNbbh8RNPPph3Y8tK1dCA1tunnz07s9TL46VjTsM5lbd.TLsrM0aeWzDtZXDDyw7a1I.XfwkZdOfR0rWqZdvDLyw9OvLLWhQ5ZefPryy1oSOu3Tk09PNbVfTuyRNPLLj6ad.6tavp3ZKfDLlyTadZ1fTuyVZtOs6vp3ZK02nWtNw.NO3rtr6d2StCvp3ZI_Xn0rQiZe9Dfp3dK3qm_ph2Q9m_rkh7.2XlW5Xy4emjLyp.duLfsZ1tTN_eHs39ckPf2y8q4JuXJp67Yezf1yQ9_bLyrckac.iHs39ckPf2y8q3qHLLj08NPTD0079zHRXNQ5Zcenhp6Yemnfug7d_Xd0r2pYcmnD00790fZvxYdkHHj67euzD00791d1LDk04emnfumV4OPH129dmHpp37qwwqWHJpw9NO_dOy9KfXlmw48syvBx4.u3rsw9NO_dWGFSw5NOHpp37p2XpT68s2HHlp14OPH129dmHpp37q.KWHJpw9NO_dE05s3Xnlg48fXb12YemnfurWmYd2SnlwzcPPW3OfTfyy5OPXLy839OSvMLNt0unWbfyy48PPo6daNPLZh2unXPryzYceV064b9O7o6dbeuzpp4b9O7pj39svLDnytDpp25afTLwn5CaHTTty2t.7LWNVqQwA-">
             <om:phenomenonTime>
                 <gml:TimePeriod gml:id="time-interval-1-1">
-                    <gml:beginPosition>2020-03-20T17:20:00Z</gml:beginPosition>
-                    <gml:endPosition>2020-03-20T17:20:00Z</gml:endPosition>
+                    <gml:beginPosition>2020-03-03T16:00:00Z</gml:beginPosition>
+                    <gml:endPosition>2020-03-03T23:00:00Z</gml:endPosition>
                 </gml:TimePeriod>
             </om:phenomenonTime>
             <om:resultTime>
                 <gml:TimeInstant gml:id="time-1-1">
-                    <gml:timePosition>2020-02-20T15:37:58Z</gml:timePosition>
+                    <gml:timePosition>2020-03-05T15:38:00Z</gml:timePosition>
                 </gml:TimeInstant>
             </om:resultTime>
             <om:procedure xlink:href="http://xml.fmi.fi/inspire/process/hirlam"/>
@@ -44,7 +44,7 @@
                     <om:name xlink:href="http://xml.fmi.fi/inspire/process/hirlam"/>
                     <om:value>
                         <gml:TimeInstant gml:id="analysis-time-1-1">
-                            <gml:timePosition>2020-02-20T12:00:00Z</gml:timePosition>
+                            <gml:timePosition>2020-03-05T12:00:00Z</gml:timePosition>
                         </gml:TimeInstant>
                     </om:value>
                 </om:NamedValue>
@@ -55,14 +55,14 @@
                     <sam:sampledFeature>
                         <target:LocationCollection gml:id="sampled-target-1-1">
                             <target:member>
-                                <target:Location gml:id="forloc-geoid-843553-pos">
-                                    <gml:identifier codeSpace="http://xml.fmi.fi/namespace/stationcode/geoid">843553</gml:identifier>
-                                    <gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/name">Mäkkylä</gml:name>
-                                    <gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/geoid">843553</gml:name>
-                                    <target:representativePoint xlink:href="#point-843553"/>
+                                <target:Location gml:id="forloc-geoid-643492-pos">
+                                    <gml:identifier codeSpace="http://xml.fmi.fi/namespace/stationcode/geoid">643492</gml:identifier>
+                                    <gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/name">Oulu</gml:name>
+                                    <gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/geoid">643492</gml:name>
+                                    <target:representativePoint xlink:href="#point-643492"/>
                                     <target:country codeSpace="http://xml.fmi.fi/namespace/location/country">Finland</target:country>
                                     <target:timezone>Europe/Helsinki</target:timezone>
-                                    <target:region codeSpace="http://xml.fmi.fi/namespace/location/region">Espoo</target:region>
+                                    <target:region codeSpace="http://xml.fmi.fi/namespace/location/region">Finland</target:region>
                                 </target:Location>
                             </target:member>
                         </target:LocationCollection>
@@ -70,9 +70,9 @@
                     <sams:shape>
                         <gml:MultiPoint gml:id="sf-1-1-">
                             <gml:pointMembers>
-                                <gml:Point gml:id="point-843553" srsName="http://www.opengis.net/def/crs/EPSG/0/4258" srsDimension="2">
-                                    <gml:name>Mäkkylä</gml:name>
-                                    <gml:pos>60.22409 24.83073 </gml:pos>
+                                <gml:Point gml:id="point-643492" srsName="http://www.opengis.net/def/crs/EPSG/0/4258" srsDimension="2">
+                                    <gml:name>Oulu</gml:name>
+                                    <gml:pos>65.01236 25.46816 </gml:pos>
                                 </gml:Point>
                             </gml:pointMembers>
                         </gml:MultiPoint>
@@ -84,7 +84,14 @@
                     <gml:domainSet>
                         <gmlcov:SimpleMultiPoint gml:id="mp-1-1" srsName="http://xml.fmi.fi/gml/crs/compoundCRS.php?crs=4258&amp;time=unixtime" srsDimension="3">
                             <gmlcov:positions>
-                                60.22409 24.83073  1584724800
+                                65.01236 25.46816  1583251200
+                                65.01236 25.46816  1583254800
+                                65.01236 25.46816  1583258400
+                                65.01236 25.46816  1583262000
+                                65.01236 25.46816  1583265600
+                                65.01236 25.46816  1583269200
+                                65.01236 25.46816  1583272800
+                                65.01236 25.46816  1583276400
                             </gmlcov:positions>
                         </gmlcov:SimpleMultiPoint>
                     </gml:domainSet>
@@ -92,6 +99,13 @@
                         <gml:DataBlock>
                             <gml:rangeParameters/>
                             <gml:doubleOrNilReasonTupleList>
+                                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN
+                                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN
+                                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN
+                                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN
+                                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN
+                                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN
+                                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN
                                 NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN
                             </gml:doubleOrNilReasonTupleList>
                         </gml:DataBlock>
