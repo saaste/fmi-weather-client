@@ -119,11 +119,20 @@ def _send_request(params: Dict[str, Any]) -> str:
     """
     url = 'http://opendata.fmi.fi/wfs'
 
-    _LOGGER.debug("Sending GET to %s with parameters: %s", url, params)
+    _LOGGER.debug("GET request to %s. Parameters: %s", url, params)
     response = requests.get(url, params=params)
+
+    if response.status_code == 200:
+        response_logger = _LOGGER.debug
+    else:
+        response_logger = _LOGGER.warning
+
+    response_logger("GET response from %s in %d ms. Status: %d.",
+                    url,
+                    response.elapsed.microseconds / 1000,
+                    response.status_code)
 
     if response.status_code >= 500:
         raise ServiceError("Invalid FMI service response", {'status_code': response.status_code, 'body': response.text})
 
-    _LOGGER.debug("Received a response from FMI in %s ms", response.elapsed.microseconds / 1000)
     return response.text

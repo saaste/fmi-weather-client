@@ -1,14 +1,17 @@
 # pylint: disable=bad-continuation
 # Just because I like to align them like this ;)
-import math
+import logging
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
+import math
 import xmltodict
 
 from fmi_weather_client import errors
 from fmi_weather_client.errors import NoDataAvailableError
-from fmi_weather_client.models import FMIPlace, Forecast, WeatherData, Value
+from fmi_weather_client.models import FMIPlace, Forecast, Value, WeatherData
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def parse_forecast(body: str):
@@ -18,10 +21,18 @@ def parse_forecast(body: str):
     :return: Response body as dictionary
     """
     data = _body_to_dict(body)
+
     station = _get_place(data)
+    _LOGGER.debug("Received place: %s (%d, %d)", station.name, station.lat, station.lon)
+
     times = _get_datetimes(data)
+    _LOGGER.debug("Received time points: %d", len(times))
+
     types = _get_value_types(data)
+    _LOGGER.debug("Received types: %d", len(types))
+
     value_sets = _get_values(data)
+    _LOGGER.debug("Received value sets: %d", len(value_sets))
 
     # Combine values with types
     typed_value_sets: List[Dict[str, float]] = []
@@ -38,6 +49,8 @@ def parse_forecast(body: str):
     for idx, time in enumerate(times):
         if _is_non_empty_forecast(typed_value_sets[idx]):
             forecast.forecasts.append(_create_weather_data(time, typed_value_sets[idx]))
+
+    _LOGGER.debug("Received non-empty value sets: %d", len(forecast.forecasts))
 
     return forecast
 

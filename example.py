@@ -1,8 +1,15 @@
+import logging
+import os
+
 import fmi_weather_client
 from fmi_weather_client.models import Forecast, Weather, WeatherData
 
+log_level = getattr(logging, os.environ.get("LOG_LEVEL", "INFO").upper(), logging.INFO)
+logging.basicConfig(level=log_level)
+
 
 def print_weather(weather: Weather):
+    print()
     print(weather.place)
     print("Location: %s, %s" % (weather.lat, weather.lon))
     print_weather_data(weather.data)
@@ -10,6 +17,7 @@ def print_weather(weather: Weather):
 
 
 def print_forecast(station_forecast: Forecast):
+    print()
     print("Place: %s" % station_forecast.place)
     print("Location: %s, %s" % (station_forecast.lat, station_forecast.lon))
     for weather in station_forecast.forecasts:
