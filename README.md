@@ -24,28 +24,62 @@ $ pip install fmi-weather-client
 ```
 
 ### Get weather and forecasts
+You can get the weather using the following functions:
+- `weather_by_place_name(place_name)`
+- `weather_by_coordinates(latitude, longitude)`
 
+Example:
 ```python
-import fmi_weather_client
+import fmi_weather_client as fmi
+from fmi_weather_client.errors import ClientError, ServerError
 
-weather1 = fmi_weather_client.weather_by_coordinates(60.170998, 24.941325)
-weather2 = fmi_weather_client.weather_by_place_name("Rastila, Helsinki")
-forecast1 = fmi_weather_client.forecast_by_place_name("Jäppilä, Pieksämäki")
-forecast2 = fmi_weather_client.forecast_by_coordinates(67.6894, 28.62406, timestep_hours=12)
+try:
+    weather = fmi.weather_by_place_name("Jäppilä, Pieksämäki")
+    if weather is not None:
+        print(f"Temperature in {weather.place} is {weather.data.temperature}")
+except ClientError as err:
+    print(f"Client error with status {err.status_code}: {err.message}")
+except ServerError as err:
+    print(f"Server error with status {err.status_code}: {err.body}")
 ```
 
-There are also asynchronous versions available:
+You can get the forecasts using the following functions:
+- `forecast_by_place_name(place_name, [timestep_hours=24])`
+- `forecast_by_coordinates(latitude, longitude, [timestep_hours=24])`
+
+Example:
 ```python
-weather1 = await fmi_weather_client.async_weather_by_coordinates(60.170998, 24.941325)
-weather2 = await fmi_weather_client.async_weather_by_place_name("Rastila, Helsinki")
-forecast1 = await fmi_weather_client.async_forecast_by_place_name("Jäppilä, Pieksämäki")
-forecast2 = await fmi_weather_client.async_forecast_by_coordinates(67.6894, 28.62406, timestep_hours=12)
+import fmi_weather_client as fmi
+from fmi_weather_client.errors import ClientError, ServerError
+
+try:
+    forecast = fmi.forecast_by_coordinates(60.170998, 24.941325)
+    for weather_data in forecast.forecasts:
+        print(f"Temperature at {weather_data.time}: {weather_data.temperature}")
+except ClientError as err:
+    print(f"Client error with status {err.status_code}: {err.message}")
+except ServerError as err:
+    print(f"Server error with status {err.status_code}: {err.body}")
+
 ```
 
-If data is not available, the following exception is thrown:
-```
-fmi_weather_client.errors.NoWeatherDataError
-```
+All functions have asynchronous versions available with `async_` prefix.
+
+### Errors
+
+##### ClientError
+Happens if FMI service returns `400-499`. This can happens for example if:
+- Provided coordinates are invalid
+- Provided place is not recognized
+- Weather data is not available
+
+Error object contains status code and human-readable error message from FMI service.
+
+##### ServerError
+Happens if FMI service returns any other error.
+
+Error object contains status code and raw response body from FMI service
+
 
 ### Weather data
 FMI provides the following commonly used information:
