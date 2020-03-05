@@ -4,8 +4,9 @@ from enum import Enum
 from typing import Any, Dict, Optional
 
 import requests
+import xmltodict
 
-from fmi_weather_client.errors import ServiceError
+from fmi_weather_client.errors import ClientError, ServerError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -119,11 +120,28 @@ def _send_request(params: Dict[str, Any]) -> str:
     """
     url = 'http://opendata.fmi.fi/wfs'
 
-    _LOGGER.debug("Sending GET to %s with parameters: %s", url, params)
+    _LOGGER.debug("GET request to %s. Parameters: %s", url, params)
     response = requests.get(url, params=params)
 
-    if response.status_code >= 500:
-        raise ServiceError("Invalid FMI service response", {'status_code': response.status_code, 'body': response.text})
+    if response.status_code == 200:
+        _LOGGER.debug("GET response from %s in %d ms. Status: %d.",
+                      url,
+                      response.elapsed.microseconds / 1000,
+                      response.status_code)
+    else:
+        _handle_errors(response)
 
-    _LOGGER.debug("Received a response from FMI in %s ms", response.elapsed.microseconds / 1000)
     return response.text
+
+
+def _handle_errors(response: requests.Response):
+    """Handle error responses from FMI service"""
+    if 400 <= response.status_code < 500:
+        data = xmltodict.parse(response.text)
+        try:
+            error_message = data['ExceptionReport']['ExceptionText'][0]
+            raise ClientError(response.status_code, error_message)
+        except Exception:
+            raise ClientError(response.status_code, response.text)
+
+    raise ServerError(response.status_code, response.text)

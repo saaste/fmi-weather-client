@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport xmlns="http://www.opengis.net/ows/1.1"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd"
+                 version="2.0.0" xml:lang="eng">
+    <Exception exceptionCode="OperationParsingFailed">
+        <ExceptionText>[Runtime error] Invalid lon-lat given to WorldTimeZones::zone_name: 124.834,160.222</ExceptionText>
+        <ExceptionText>URI: /wfs?endtime=2020-03-03T23%3A26%3A00Z&amp;latlon=160.2224%2C124.83385&amp;parameters=WeatherSymbol3&amp;request=GetFeature&amp;service=WFS&amp;starttime=2020-03-03T15%3A26%3A00Z&amp;storedquery_id=fmi%3A%3Aforecast%3A%3Ahirlam%3A%3Asurface%3A%3Apoint%3A%3Amultipointcoverage&amp;timestep=60&amp;version=2.0.0</ExceptionText>
+    </Exception>
+</ExceptionReport>
