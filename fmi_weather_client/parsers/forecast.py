@@ -7,8 +7,6 @@ from typing import Any, Dict, List, Optional
 import math
 import xmltodict
 
-from fmi_weather_client import errors
-from fmi_weather_client.errors import NoDataAvailableError
 from fmi_weather_client.models import FMIPlace, Forecast, Value, WeatherData
 
 _LOGGER = logging.getLogger(__name__)
@@ -20,7 +18,7 @@ def parse_forecast(body: str):
     :param body: Forecast response body
     :return: Response body as dictionary
     """
-    data = _body_to_dict(body)
+    data = xmltodict.parse(body)
 
     station = _get_place(data)
     _LOGGER.debug("Received place: %s (%d, %d)", station.name, station.lat, station.lon)
@@ -42,39 +40,15 @@ def parse_forecast(body: str):
             typed_value_set[types[idx]] = value
         typed_value_sets.append(typed_value_set)
 
-    # Build forecast objects
-    forecast = Forecast(station.name, station.lat, station.lon, [])
-
     # Combine typed values with times
+    forecasts = []
     for idx, time in enumerate(times):
         if _is_non_empty_forecast(typed_value_sets[idx]):
-            forecast.forecasts.append(_create_weather_data(time, typed_value_sets[idx]))
+            forecasts.append(_create_weather_data(time, typed_value_sets[idx]))
 
-    _LOGGER.debug("Received non-empty value sets: %d", len(forecast.forecasts))
+    _LOGGER.debug("Received non-empty value sets: %d", len(forecasts))
 
-    return forecast
-
-
-def _body_to_dict(body: str) -> Dict[str, Any]:
-    """
-    Convert FMI response body to dictionary and check errors
-    :param body: FMI response body
-    :return: Response as dictionary
-    """
-    data = xmltodict.parse(body)
-
-    # Check exception response
-    if 'ExceptionReport' in data.keys():
-        if 'No locations found for the place' in data['ExceptionReport']['Exception']['ExceptionText'][0]:
-            raise errors.NoDataAvailableError
-        if 'No data available for' in data['ExceptionReport']['Exception']['ExceptionText'][0]:
-            raise errors.NoDataAvailableError
-        raise errors.ServiceError(data['ExceptionReport']['Exception']['ExceptionText'][0])
-
-    if 'wfs:member' not in data['wfs:FeatureCollection'].keys():
-        raise errors.NoDataAvailableError
-
-    return data
+    return Forecast(station.name, station.lat, station.lon, forecasts)
 
 
 def _get_place(data: Dict[str, Any]) -> FMIPlace:
@@ -120,20 +94,13 @@ def _get_values(data: Dict[str, Any]) -> List[List[float]]:
                       ['om:result']['gmlcov:MultiPointCoverage']['gml:rangeSet']['gml:DataBlock']
                       ['gml:doubleOrNilReasonTupleList'].split('\n'))
 
-    contains_values = False
-
     for forecast_value_set in value_sets:
         forecast_values = forecast_value_set.strip().split(' ')
         value_set = []
         for value in forecast_values:
             value_set.append(float(value))
-            if not contains_values and _float_or_none(value) is not None:
-                contains_values = True
 
         result.append(value_set)
-
-    if not contains_values:
-        raise NoDataAvailableError
 
     return result
 

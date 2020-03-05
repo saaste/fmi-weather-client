@@ -4,7 +4,7 @@
                  xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd"
                  version="2.0.0" xml:lang="eng">
     <Exception exceptionCode="OperationParsingFailed">
-        <ExceptionText>This is just a fake error!</ExceptionText>
-        <ExceptionText>URI: /wfs?place=Notfound&amp;request=GetFeature&amp;service=WFS&amp;starttime=2020-02-10T10%3A00%3A00Z&amp;storedquery_id=fmi%3A%3Aobservations%3A%3Aweather%3A%3Amultipointcoverage&amp;timestep=10&amp;version=2.0.0</ExceptionText>
+        <ExceptionText>No data available for &apos;-43.3439,32.1254&apos;!</ExceptionText>
+        <ExceptionText>URI: /wfs?endtime=2020-03-03T23%3A26%3A00Z&amp;latlon=32.1254396%2C-43.3439002&amp;request=GetFeature&amp;service=WFS&amp;starttime=2020-03-03T15%3A26%3A00Z&amp;storedquery_id=fmi%3A%3Aforecast%3A%3Ahirlam%3A%3Asurface%3A%3Apoint%3A%3Amultipointcoverage&amp;timestep=60&amp;version=2.0.0</ExceptionText>
     </Exception>
 </ExceptionReport>
