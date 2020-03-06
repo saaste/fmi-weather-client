@@ -141,7 +141,7 @@ def _handle_errors(response: requests.Response):
         try:
             error_message = data['ExceptionReport']['Exception']['ExceptionText'][0]
             raise ClientError(response.status_code, error_message)
-        except (KeyError, IndexError) as e:
+        except (KeyError, IndexError):
             raise ClientError(response.status_code, response.text)
 
     raise ServerError(response.status_code, response.text)

@@ -11,8 +11,8 @@ try:
     # Print current temperature
     print()
     print(f"Temperature @ {kilpisjarvi_weather.place}: {kilpisjarvi_weather.data.temperature}")
-    
-    # Print temperature forecasts 
+
+    # Print temperature forecasts
     print()
     print(f"Forecast for {helsinki_forecast.place}")
     for forecast in helsinki_forecast.forecasts:
