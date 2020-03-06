@@ -1,7 +1,10 @@
 .idea/
+.vscode/
 venv/
 build/
 dist/
 *.egg-info/
 __pycache__
 fmi-weather.iml
+.coverage
+coverage_html_report/
