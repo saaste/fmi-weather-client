@@ -18,8 +18,11 @@ class Value(NamedTuple):
     unit: str
 
     def __str__(self):
-        return f"{self.value} {self.unit}"
-
+        parts = []
+        parts.append(self.value if self.value is not None else "-")
+        if (self.unit):
+            parts.append(self.unit)
+        return " ".join(map(str, parts))
 
 class WeatherData(NamedTuple):
     """Represents a weather"""
