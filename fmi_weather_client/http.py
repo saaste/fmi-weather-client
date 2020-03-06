@@ -139,9 +139,9 @@ def _handle_errors(response: requests.Response):
     if 400 <= response.status_code < 500:
         data = xmltodict.parse(response.text)
         try:
-            error_message = data['ExceptionReport']['ExceptionText'][0]
+            error_message = data['ExceptionReport']['Exception']['ExceptionText'][0]
             raise ClientError(response.status_code, error_message)
-        except Exception:
+        except (KeyError, IndexError):
             raise ClientError(response.status_code, response.text)
 
     raise ServerError(response.status_code, response.text)

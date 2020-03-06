@@ -4,6 +4,7 @@ from fmi_weather_client.http import RequestType
 from fmi_weather_client.errors import ClientError
 from collections import namedtuple
 
+
 class HTTPTest(unittest.TestCase):
 
     def test_create_params_missing_location(self):
@@ -26,4 +27,3 @@ class HTTPTest(unittest.TestCase):
             Response = namedtuple("Response", ['status_code', 'text'])
             mock_response = Response(status_code=status_code, text=text)
             http._handle_errors(mock_response)
-

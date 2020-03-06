@@ -24,6 +24,7 @@ class Value(NamedTuple):
             parts.append(self.unit)
         return " ".join(map(str, parts))
 
+
 class WeatherData(NamedTuple):
     """Represents a weather"""
     time: datetime
