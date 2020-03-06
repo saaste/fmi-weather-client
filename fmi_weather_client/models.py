@@ -20,7 +20,7 @@ class Value(NamedTuple):
     def __str__(self):
         parts = []
         parts.append(self.value if self.value is not None else "-")
-        if (self.unit):
+        if self.unit:
             parts.append(self.unit)
         return " ".join(map(str, parts))
 
