@@ -1,6 +1,8 @@
 import unittest
 from unittest import mock
 
+import asyncio
+
 import fmi_weather_client
 import test.test_data as test_data
 from fmi_weather_client.errors import ClientError, ServerError

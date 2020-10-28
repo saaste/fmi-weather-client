@@ -1,5 +1,7 @@
 from typing import Optional
 
+import asyncio
+
 from fmi_weather_client import http
 from fmi_weather_client.models import Weather
 from fmi_weather_client.parsers import forecast as forecast_parser
