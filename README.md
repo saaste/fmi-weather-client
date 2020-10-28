@@ -103,7 +103,7 @@ $ source venv/bin/activate
 
 Install required packages
 ```
-$ make setup-dev-env
+$ make setup
 ```
 
 Deactivate virtual environment when you are done
