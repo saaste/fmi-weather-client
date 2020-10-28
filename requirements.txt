@@ -1,3 +1,2 @@
-asyncio==3.4.3
 requests==2.23.0
 xmltodict==0.12.0
