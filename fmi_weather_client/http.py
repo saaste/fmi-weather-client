@@ -97,7 +97,7 @@ def _create_params(request_type: RequestType,
         'service': 'WFS',
         'version': '2.0.0',
         'request': 'getFeature',
-        'storedquery_id': 'fmi::forecast::hirlam::surface::point::multipointcoverage',
+        'storedquery_id': 'fmi::forecast::harmonie::surface::point::multipointcoverage',
         'timestep': timestep_minutes,
         'starttime': start_time.isoformat(timespec='seconds'),
         'endtime': end_time.isoformat(timespec='seconds')
