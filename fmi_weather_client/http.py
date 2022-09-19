@@ -100,7 +100,13 @@ def _create_params(request_type: RequestType,
         'storedquery_id': 'fmi::forecast::harmonie::surface::point::multipointcoverage',
         'timestep': timestep_minutes,
         'starttime': start_time.isoformat(timespec='seconds'),
-        'endtime': end_time.isoformat(timespec='seconds')
+        'endtime': end_time.isoformat(timespec='seconds'),
+        'parameters': (
+            'Temperature,DewPoint,Pressure,Humidity,WindDirection,WindSpeedMS,'
+            'WindUMS,WindVMS,WindGust,WeatherSymbol3,TotalCloudCover,LowCloudCover,'
+            'MediumCloudCover,HighCloudCover,Precipitation1h,RadiationGlobalAccumulation,'
+            'RadiationNetSurfaceSWAccumulation,RadiationNetSurfaceLWAccumulation,GeopHeight,LandSeaMask'
+        )
     }
 
     if lat is not None and lon is not None:
