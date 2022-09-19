@@ -112,6 +112,10 @@ def _create_weather_data(time, values: Dict[str, float]) -> WeatherData:
         value = vals.get(variable_name, None)
         return Value(value, unit)
 
+    # Some fields were available in HIRLAM forecasts, but are not
+    # available in HARMONIE forecasts. These fields are kept here
+    # for backward compatibility. Value of those fields will
+    # always be None.
     return WeatherData(
         time=time,
         temperature=to_value(values, 'Temperature', '°C'),
@@ -122,7 +126,7 @@ def _create_weather_data(time, values: Dict[str, float]) -> WeatherData:
         wind_speed=to_value(values, 'WindSpeedMS', 'm/s'),
         wind_u_component=to_value(values, 'WindUMS', 'm/s'),
         wind_v_component=to_value(values, 'WindVMS', 'm/s'),
-        wind_max=to_value(values, 'MaximumWind', 'm/s'),
+        wind_max=to_value(values, 'MaximumWind', 'm/s'),  # Not supported
         wind_gust=to_value(values, 'WindGust', 'm/s'),
         symbol=to_value(values, 'WeatherSymbol3', ''),
         cloud_cover=to_value(values, 'TotalCloudCover', '%'),
@@ -132,11 +136,12 @@ def _create_weather_data(time, values: Dict[str, float]) -> WeatherData:
         precipitation_amount=to_value(values, 'Precipitation1h', 'mm/h'),
         radiation_short_wave_acc=to_value(values, 'RadiationGlobalAccumulation', 'J/m²'),
         radiation_short_wave_surface_net_acc=to_value(values, 'RadiationNetSurfaceSWAccumulation', 'J/m²'),
-        radiation_long_wave_acc=to_value(values, 'RadiationLWAccumulation', 'J/m²'),
+        radiation_long_wave_acc=to_value(values, 'RadiationLWAccumulation', 'J/m²'),  # Not supported
         radiation_long_wave_surface_net_acc=to_value(values, 'RadiationNetSurfaceLWAccumulation', 'J/m²'),
-        radiation_short_wave_diff_surface_acc=to_value(values, 'RadiationDiffuseAccumulation', 'J/m²'),
+        radiation_short_wave_diff_surface_acc=to_value(values, 'RadiationDiffuseAccumulation', 'J/m²'),  # Not supported
         geopotential_height=to_value(values, 'GeopHeight', 'm'),
-        land_sea_mask=to_value(values, 'LandSeaMask', ''))
+        land_sea_mask=to_value(values, 'LandSeaMask', '')  # Not supported
+        )
 
 
 def _float_or_none(value: Any) -> Optional[float]:
