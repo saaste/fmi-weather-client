@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wfs:FeatureCollection
-        timeStamp="2020-03-05T18:04:15Z"
-        numberMatched="1"
-        numberReturned="1"
-        xmlns:wfs="http://www.opengis.net/wfs/2.0"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        xmlns:om="http://www.opengis.net/om/2.0"
-        xmlns:omso="http://inspire.ec.europa.eu/schemas/omso/3.0"
-        xmlns:ompr="http://inspire.ec.europa.eu/schemas/ompr/3.0"
-        xmlns:gml="http://www.opengis.net/gml/3.2"
-        xmlns:gmd="http://www.isotc211.org/2005/gmd"
-        xmlns:gco="http://www.isotc211.org/2005/gco"
-        xmlns:swe="http://www.opengis.net/swe/2.0"
-        xmlns:gmlcov="http://www.opengis.net/gmlcov/1.0"
-        xmlns:sam="http://www.opengis.net/sampling/2.0"
-        xmlns:sams="http://www.opengis.net/samplingSpatial/2.0"
-        xmlns:target="http://xml.fmi.fi/namespace/om/atmosphericfeatures/1.0"
-        xsi:schemaLocation="http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd
+    timeStamp="2022-09-19T12:40:35Z"
+    numberMatched="1"
+    numberReturned="1"
+    xmlns:wfs="http://www.opengis.net/wfs/2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:om="http://www.opengis.net/om/2.0"
+    xmlns:omso="http://inspire.ec.europa.eu/schemas/omso/3.0"
+    xmlns:ompr="http://inspire.ec.europa.eu/schemas/ompr/3.0"
+    xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:gmd="http://www.isotc211.org/2005/gmd"
+    xmlns:gco="http://www.isotc211.org/2005/gco"
+    xmlns:swe="http://www.opengis.net/swe/2.0"
+    xmlns:gmlcov="http://www.opengis.net/gmlcov/1.0"
+    xmlns:sam="http://www.opengis.net/sampling/2.0"
+    xmlns:sams="http://www.opengis.net/samplingSpatial/2.0"
+    xmlns:target="http://xml.fmi.fi/namespace/om/atmosphericfeatures/1.1"
+    xsi:schemaLocation="http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd
     http://www.opengis.net/gmlcov/1.0 http://schemas.opengis.net/gmlcov/1.0/gmlcovAll.xsd
     http://www.opengis.net/sampling/2.0 http://schemas.opengis.net/sampling/2.0/samplingFeature.xsd
     http://www.opengis.net/samplingSpatial/2.0 http://schemas.opengis.net/samplingSpatial/2.0/spatialSamplingFeature.xsd
     http://www.opengis.net/swe/2.0 http://schemas.opengis.net/sweCommon/2.0/swe.xsd
-    http://inspire.ec.europa.eu/schemas/omso/3.0 http://inspire.ec.europa.eu/schemas/omso/3.0/SpecialisedObservations.xsd
-    http://inspire.ec.europa.eu/schemas/ompr/3.0 http://inspire.ec.europa.eu/schemas/ompr/3.0/Processes.xsd
-    http://xml.fmi.fi/namespace/om/atmosphericfeatures/1.0 http://xml.fmi.fi/schema/om/atmosphericfeatures/1.0/atmosphericfeatures.xsd">
+    http://inspire.ec.europa.eu/schemas/omso/3.0 https://inspire.ec.europa.eu/schemas/omso/3.0/SpecialisedObservations.xsd
+    http://inspire.ec.europa.eu/schemas/ompr/3.0 https://inspire.ec.europa.eu/schemas/ompr/3.0/Processes.xsd
+    http://xml.fmi.fi/namespace/om/atmosphericfeatures/1.1 https://xml.fmi.fi/schema/om/atmosphericfeatures/1.1/atmosphericfeatures.xsd">
     <wfs:member>
-        <omso:GridSeriesObservation gml:id="WFS-Wi_xjOFCuKQ0zpkKTePcHi4wpgOJTowuYWbbpdOs2_llx4efR060aeWzDtdOufXlmw48rp1w36d3R0629dnTTw36d3THv7ZeWHPlhaWLLn07qmnbltSfwo0bRRtCY2PlzrUi0Kcd06aMmrhnZd2Spp25bUn8KNG0WZRHBm07sk7Lh5ZefSth2ackhmZ8u_Tk51mNmjNo5ZOjXl899_LJf39svLvy09MOLZliaWzL2y7KnnhlqZmzfjw7MtambTfjSV3XpmcNbbh8RNPPph3Y8tK1dCA1tunnz07s9TL46VjTsM5lbd.TLsrM0aeWzDtZXDDyw7a1I.XfwkZdOfR0rWqZdvDLyw9OvLLWhQ5ZefPryy1oSOu3Tk09PNbVfTuyRNPLLj6ad.6tavp3ZKfDLlyTadZ1fTuyVZtOs6vp3ZK02nWtNw.NO3rtr6d2StCvp3ZI_Xn0rQiZe9Dfp3dK3qm_ph2Q9m_rkh7.2XlW5Xy4emjLyp.duLfsZ1tTN_eHs39ckPf2y8q4JuXJp67Yezf1yQ9_bLyrckac.iHs39ckPf2y8q3qHLLj08NPTD0079zHRXNQ5Zcenhp6Yemnfug7d_Xd0r2pYcmnD00790fZvxYdkHHj67euzD00791d1LDk04emnfumV4OPH129dmHpp37qwwqWHJpw9NO_dOy9KfXlmw48syvBx4.u3rsw9NO_dWGFSw5NOHpp37p2XpT68s2HHlp14OPH129dmHpp37q.KWHJpw9NO_dE05s3Xnlg48fXb12YemnfurWmYd2SnlwzcPPW3OfTfyy5OPXLy839OSvMLNt0unWbfyy48PPo6daNPLZh2unXPryzYceV064b9O7o6dbeuzpp4b9O7pj39svLDnytDpp25afTLwn5CaHTTty2t.7LWNVqQwA-">
+        <omso:GridSeriesObservation gml:id="WFS-6yEr2wr6MxcpH3QPjOgXdK2NDkKJTowu4WbbpdOs2_llx4efR060YeW3fu05XTrn15ZsOPK6dcN.nd0dOtvXZ008N.nd0x7.2Xlhz5YWliy59O6pp25bU38Kl6.3QQmNj5c61ItCnHdOmjNk2Z2XdkqaduW1N_Cpevt88JwZtO7JOy4eWXn0rYdmnJIZmfLv05OdZjZozaOWTo15fPffyyX9_bLy78tPTDi2ZYmlsy9suyp54ZamZs348OzLWpm0340ld16ZnDW24fETTz6Yd2PLStXQgNbbp589O7PUy.OlY07DOZW3fky7K.NGHlt37tOW_zx4d2TTuw9tOG_z68s2HHlZXDDyw7a0KHLLz59eWWtSPl38JGXTn0dK1qmXbwy8sPTryy1oRMvehv07ulaEjrt05NPTzW1X07skTTyy4.mnfurWr6d2Snwy5ck2nWdX07slWbTrOr6d2StNp1zUOWXHp4aemHpp37oO3f13dK3qm_ph2Q9m_rkh7.2XlW1M394ezf1yQ9_bLyrgm5cmnrth7N_XJD39svKtyRpz6Iezf1yQ9_bLyrepYcmnD00790fZvxYdle1LDk04emnfuj7N.LDsg48fXb12YemnfurDCpYcmnD007907L0p9eWbDjyzK8HHj67euzD00791YYVLDk04emnfunZelPryzYceWnXg48fXb12YemnfurupYcmnD00791OvBx4.u3rsw9NO_dWpW089OLTs09PNaFfTuyR.vPo3OfTfyy5OPXLy839OSvcLNt0unWbfyy48PPo6daMPLbv3acrp1z68s2HHldOuG_Tu6OnW3rs6aeG_Tu6Y9_bLyw58rQ6aduWn0y8J1Gh007ctrfuy1jVakMA-">
             <om:phenomenonTime>
                 <gml:TimePeriod gml:id="time-interval-1-1">
-                    <gml:beginPosition>2020-03-03T16:00:00Z</gml:beginPosition>
-                    <gml:endPosition>2020-03-03T23:00:00Z</gml:endPosition>
+                    <gml:beginPosition>2022-09-29T09:20:00Z</gml:beginPosition>
+                    <gml:endPosition>2022-09-29T11:10:00Z</gml:endPosition>
                 </gml:TimePeriod>
             </om:phenomenonTime>
             <om:resultTime>
                 <gml:TimeInstant gml:id="time-1-1">
-                    <gml:timePosition>2020-03-05T15:38:00Z</gml:timePosition>
+                    <gml:timePosition>2022-09-19T12:06:30Z</gml:timePosition>
                 </gml:TimeInstant>
             </om:resultTime>
-            <om:procedure xlink:href="http://xml.fmi.fi/inspire/process/hirlam"/>
+            <om:procedure xlink:href="http://xml.fmi.fi/inspire/process/harmonie_scandinavia_surface"/>
             <om:parameter>
                 <om:NamedValue>
-                    <om:name xlink:href="http://xml.fmi.fi/inspire/process/hirlam"/>
+                    <om:name xlink:href="http://xml.fmi.fi/inspire/process/harmonie_scandinavia_surface"/>
                     <om:value>
                         <gml:TimeInstant gml:id="analysis-time-1-1">
-                            <gml:timePosition>2020-03-05T12:00:00Z</gml:timePosition>
+                            <gml:timePosition>2022-09-19T09:00:00Z</gml:timePosition>
                         </gml:TimeInstant>
                     </om:value>
                 </om:NamedValue>
             </om:parameter>
-            <om:observedProperty  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=GeopHeight,Temperature,Pressure,Humidity,WindDirection,WindSpeedMS,WindUMS,WindVMS,MaximumWind,WindGust,DewPoint,TotalCloudCover,WeatherSymbol3,LowCloudCover,MediumCloudCover,HighCloudCover,Precipitation1h,PrecipitationAmount,RadiationGlobalAccumulation,RadiationLWAccumulation,RadiationNetSurfaceLWAccumulation,RadiationNetSurfaceSWAccumulation,RadiationDiffuseAccumulation,LandSeaMask&amp;language=eng"/>
+            <om:observedProperty  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=Pressure,GeopHeight,Temperature,DewPoint,Humidity,WindDirection,WindSpeedMS,WindUMS,WindVMS,PrecipitationAmount,TotalCloudCover,LowCloudCover,MediumCloudCover,HighCloudCover,RadiationGlobal,RadiationGlobalAccumulation,RadiationNetSurfaceLWAccumulation,RadiationNetSurfaceSWAccumulation,RadiationSWAccumulation,Visibility,WindGust&amp;language=eng"/>
             <om:featureOfInterest>
                 <sams:SF_SpatialSamplingFeature gml:id="enn-s-1-1-">
                     <sam:sampledFeature>
@@ -70,7 +70,7 @@
                     <sams:shape>
                         <gml:MultiPoint gml:id="sf-1-1-">
                             <gml:pointMembers>
-                                <gml:Point gml:id="point-643492" srsName="http://www.opengis.net/def/crs/EPSG/0/4258" srsDimension="2">
+                                <gml:Point gml:id="point-643492" srsName="http://www.opengis.net/def/crs/EPSG/0/4326" srsDimension="2">
                                     <gml:name>Oulu</gml:name>
                                     <gml:pos>65.01236 25.46816 </gml:pos>
                                 </gml:Point>
@@ -82,32 +82,40 @@
             <om:result>
                 <gmlcov:MultiPointCoverage gml:id="mpcv-1-1">
                     <gml:domainSet>
-                        <gmlcov:SimpleMultiPoint gml:id="mp-1-1" srsName="http://xml.fmi.fi/gml/crs/compoundCRS.php?crs=4258&amp;time=unixtime" srsDimension="3">
+                        <gmlcov:SimpleMultiPoint gml:id="mp-1-1" srsName="http://xml.fmi.fi/gml/crs/compoundCRS.php?crs=4326&amp;time=unixtime" srsDimension="3">
                             <gmlcov:positions>
-                                65.01236 25.46816  1583251200
-                                65.01236 25.46816  1583254800
-                                65.01236 25.46816  1583258400
-                                65.01236 25.46816  1583262000
-                                65.01236 25.46816  1583265600
-                                65.01236 25.46816  1583269200
-                                65.01236 25.46816  1583272800
-                                65.01236 25.46816  1583276400
-                            </gmlcov:positions>
+                65.01236 25.46816  1664443200
+                65.01236 25.46816  1664443800
+                65.01236 25.46816  1664444400
+                65.01236 25.46816  1664445000
+                65.01236 25.46816  1664445600
+                65.01236 25.46816  1664446200
+                65.01236 25.46816  1664446800
+                65.01236 25.46816  1664447400
+                65.01236 25.46816  1664448000
+                65.01236 25.46816  1664448600
+                65.01236 25.46816  1664449200
+                65.01236 25.46816  1664449800
+                </gmlcov:positions>
                         </gmlcov:SimpleMultiPoint>
                     </gml:domainSet>
                     <gml:rangeSet>
                         <gml:DataBlock>
                             <gml:rangeParameters/>
                             <gml:doubleOrNilReasonTupleList>
-                                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN
-                                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN
-                                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN
-                                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN
-                                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN
-                                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN
-                                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN
-                                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN
-                            </gml:doubleOrNilReasonTupleList>
+                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN 
+                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN 
+                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN 
+                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN 
+                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN 
+                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN 
+                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN 
+                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN 
+                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN 
+                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN 
+                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN 
+                NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN 
+                </gml:doubleOrNilReasonTupleList>
                         </gml:DataBlock>
                     </gml:rangeSet>
                     <gml:coverageFunction>
@@ -117,30 +125,27 @@
                     </gml:coverageFunction>
                     <gmlcov:rangeType>
                         <swe:DataRecord>
+                            <swe:field name="Pressure"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=Pressure&amp;language=eng"/>
                             <swe:field name="GeopHeight"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=GeopHeight&amp;language=eng"/>
                             <swe:field name="Temperature"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=Temperature&amp;language=eng"/>
-                            <swe:field name="Pressure"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=Pressure&amp;language=eng"/>
+                            <swe:field name="DewPoint"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=DewPoint&amp;language=eng"/>
                             <swe:field name="Humidity"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=Humidity&amp;language=eng"/>
                             <swe:field name="WindDirection"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=WindDirection&amp;language=eng"/>
                             <swe:field name="WindSpeedMS"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=WindSpeedMS&amp;language=eng"/>
                             <swe:field name="WindUMS"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=WindUMS&amp;language=eng"/>
                             <swe:field name="WindVMS"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=WindVMS&amp;language=eng"/>
-                            <swe:field name="MaximumWind"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=MaximumWind&amp;language=eng"/>
-                            <swe:field name="WindGust"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=WindGust&amp;language=eng"/>
-                            <swe:field name="DewPoint"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=DewPoint&amp;language=eng"/>
+                            <swe:field name="PrecipitationAmount"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=PrecipitationAmount&amp;language=eng"/>
                             <swe:field name="TotalCloudCover"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=TotalCloudCover&amp;language=eng"/>
-                            <swe:field name="WeatherSymbol3"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=WeatherSymbol3&amp;language=eng"/>
                             <swe:field name="LowCloudCover"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=LowCloudCover&amp;language=eng"/>
                             <swe:field name="MediumCloudCover"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=MediumCloudCover&amp;language=eng"/>
                             <swe:field name="HighCloudCover"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=HighCloudCover&amp;language=eng"/>
-                            <swe:field name="Precipitation1h"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=Precipitation1h&amp;language=eng"/>
-                            <swe:field name="PrecipitationAmount"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=PrecipitationAmount&amp;language=eng"/>
+                            <swe:field name="RadiationGlobal"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=RadiationGlobal&amp;language=eng"/>
                             <swe:field name="RadiationGlobalAccumulation"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=RadiationGlobalAccumulation&amp;language=eng"/>
-                            <swe:field name="RadiationLWAccumulation"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=RadiationLWAccumulation&amp;language=eng"/>
                             <swe:field name="RadiationNetSurfaceLWAccumulation"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=RadiationNetSurfaceLWAccumulation&amp;language=eng"/>
                             <swe:field name="RadiationNetSurfaceSWAccumulation"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=RadiationNetSurfaceSWAccumulation&amp;language=eng"/>
-                            <swe:field name="RadiationDiffuseAccumulation"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=RadiationDiffuseAccumulation&amp;language=eng"/>
-                            <swe:field name="LandSeaMask"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=LandSeaMask&amp;language=eng"/>
+                            <swe:field name="RadiationSWAccumulation"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=RadiationSWAccumulation&amp;language=eng"/>
+                            <swe:field name="Visibility"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=Visibility&amp;language=eng"/>
+                            <swe:field name="WindGust"  xlink:href="http://opendata.fmi.fi/meta?observableProperty=forecast&amp;param=WindGust&amp;language=eng"/>
                         </swe:DataRecord>
                     </gmlcov:rangeType>
                 </gmlcov:MultiPointCoverage>
