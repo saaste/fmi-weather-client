@@ -56,7 +56,7 @@ def request_forecast_by_coordinates(lat: float, lon: float, timestep_hours: int 
 
 def request_forecast_by_place(place: str, timestep_hours: int = 24) -> str:
     """
-    Get the latest forecast by place coordinates
+    Get the latest forecast by place name
 
     :param place: Place name (e.g. Kaisaniemi,Helsinki)
     :param timestep_hours: Forecast steps in hours
