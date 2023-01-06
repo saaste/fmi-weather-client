@@ -7,6 +7,12 @@
 Library for fetching weather information from
 [Finnish Meteorological Institute (FMI)](https://en.ilmatieteenlaitos.fi/open-data). 
 
+If you want to know how FMI API works, you can check out their [WFS Examples and Guidelines](https://en.ilmatieteenlaitos.fi/open-data-manual-wfs-examples-and-guidelines) page.
+
+For the current weather information, this library requests observations from the past `10` minutes using timestep `10`. Based on my tests this gave pretty reliable results from different weather stations.
+
+Originally, I created this for myself to get FMI weather data to [Home Assistant](https://www.home-assistant.io/). I am not a meteorologist so if you are more weather-savvy, feel free to contribute and provide improvements! 💖
+
 ## How to use
 
 Working example can be found in [example.py](example.py).

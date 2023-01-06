@@ -56,7 +56,7 @@ def request_forecast_by_coordinates(lat: float, lon: float, timestep_hours: int 
 
 def request_forecast_by_place(place: str, timestep_hours: int = 24) -> str:
     """
-    Get the latest forecast by place coordinates
+    Get the latest forecast by place name
 
     :param place: Place name (e.g. Kaisaniemi,Helsinki)
     :param timestep_hours: Forecast steps in hours
@@ -127,7 +127,7 @@ def _send_request(params: Dict[str, Any]) -> str:
     url = 'http://opendata.fmi.fi/wfs'
 
     _LOGGER.debug("GET request to %s. Parameters: %s", url, params)
-    response = requests.get(url, params=params)
+    response = requests.get(url, params=params, timeout=10)
 
     if response.status_code == 200:
         _LOGGER.debug("GET response from %s in %d ms. Status: %d.",
@@ -147,7 +147,7 @@ def _handle_errors(response: requests.Response):
         try:
             error_message = data['ExceptionReport']['Exception']['ExceptionText'][0]
             raise ClientError(response.status_code, error_message)
-        except (KeyError, IndexError):
-            raise ClientError(response.status_code, response.text)
+        except (KeyError, IndexError) as err:
+            raise ClientError(response.status_code, response.text) from err
 
     raise ServerError(response.status_code, response.text)
