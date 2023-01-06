@@ -1,5 +1,3 @@
-# pylint: disable=bad-continuation
-# Just because I like to align them like this ;)
 import logging
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
