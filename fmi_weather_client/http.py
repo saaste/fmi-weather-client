@@ -82,7 +82,7 @@ def _create_params(request_type: RequestType,
     """
 
     if place is None and lat is None and lon is None:
-        raise Exception("Missing location parameter")
+        raise ValueError("Missing location parameter")
 
     if request_type is RequestType.WEATHER:
         end_time = datetime.utcnow().replace(tzinfo=timezone.utc)
@@ -91,7 +91,7 @@ def _create_params(request_type: RequestType,
         start_time = datetime.utcnow().replace(tzinfo=timezone.utc)
         end_time = start_time + timedelta(days=4)
     else:
-        raise Exception(f"Invalid request_type {request_type}")
+        raise ValueError(f"Invalid request_type {request_type}")
 
     params = {
         'service': 'WFS',
