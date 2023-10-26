@@ -8,3 +8,4 @@ __pycache__
 fmi-weather.iml
 .coverage
 coverage_html_report/
+.python-version
