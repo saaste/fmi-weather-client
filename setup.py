@@ -14,15 +14,14 @@ setuptools.setup(
     url="https://github.com/saaste/fmi-weather-client",
     packages=setuptools.find_packages(exclude=["*test", "*test.*"]),
     install_requires=[
-        'requests>=2.23.0',
-        'xmltodict>=0.12.0'
+        'requests>=2.31.0',
+        'xmltodict>=0.13.0'
     ],
     classifiers=[
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6.9',
+    python_requires='>=3.7.17',
 )
