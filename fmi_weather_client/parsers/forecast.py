@@ -138,8 +138,53 @@ def _create_weather_data(time, values: Dict[str, float]) -> WeatherData:
         radiation_long_wave_surface_net_acc=to_value(values, 'RadiationNetSurfaceLWAccumulation', 'J/m²'),
         radiation_short_wave_diff_surface_acc=to_value(values, 'RadiationDiffuseAccumulation', 'J/m²'),  # Not supported
         geopotential_height=to_value(values, 'GeopHeight', 'm'),
-        land_sea_mask=to_value(values, 'LandSeaMask', '')  # Not supported
+        land_sea_mask=to_value(values, 'LandSeaMask', ''),  # Not supported
+        feels_like=Value(_feels_like(values), '°C')
         )
+
+
+def _feels_like(vals: Dict[str, float]) -> float:
+    # Feels like temperature, ported from:
+    # https://github.com/fmidev/smartmet-library-newbase/blob/master/newbase/NFmiMetMath.cpp#L535
+    # For more documentation see:
+    # https://tietopyynto.fi/tietopyynto/ilmatieteen-laitoksen-kayttama-tuntuu-kuin-laskentakaava/
+    # https://tietopyynto.fi/files/foi/2940/feels_like-1.pdf
+    t = vals.get("Temperature", None)
+    w = vals.get("WindSpeedMS", None)
+    rh = vals.get("Humidity", None)
+    rad = vals.get("RadiationGlobal", None)
+
+    if t is None:
+        return None
+    if w is None or w < 0.0 or rh is None:
+        return t
+
+    # Wind chilling factor
+    chill = 15 + (1-15/37)*t + 15/37*pow(w+1, 0.16)*(t-37)
+    # Heat index
+    heat = _summer_simmer(t, rh)
+
+    # Add corrections together
+    feels = t + (chill - t) + (heat - t)
+
+    # Perform radiation correction only when radiation is available
+    if rad is not None:
+        absorption = 0.07
+        feels += 0.7 * absorption * rad / (w + 10) - 0.25
+
+    return feels
+
+
+def _summer_simmer(t: float, rh: float):
+    if t <= 14.5:
+        return t
+
+    # Humidity value is expected to be on 0..1 scale
+    r = rh / 100.0
+    rh_ref = 0.5
+
+    # Calculate the correction
+    return (1.8*t - 0.55*(1-r) * (1.8*t - 26) - 0.55*(1-rh_ref)*26) / (1.8*(1 - 0.55*(1-rh_ref)))
 
 
 def _float_or_none(value: Any) -> Optional[float]:

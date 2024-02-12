@@ -65,6 +65,9 @@ class WeatherData(NamedTuple):
     geopotential_height: Value
     land_sea_mask: Value
 
+    # Calculated "feels like" temperature
+    feels_like: Value
+
 
 class Weather(NamedTuple):
     """Represents a weather"""
