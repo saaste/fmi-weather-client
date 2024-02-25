@@ -149,42 +149,43 @@ def _feels_like(vals: Dict[str, float]) -> float:
     # For more documentation see:
     # https://tietopyynto.fi/tietopyynto/ilmatieteen-laitoksen-kayttama-tuntuu-kuin-laskentakaava/
     # https://tietopyynto.fi/files/foi/2940/feels_like-1.pdf
-    t = vals.get("Temperature", None)
-    w = vals.get("WindSpeedMS", None)
-    rh = vals.get("Humidity", None)
-    rad = vals.get("RadiationGlobal", None)
+    temperature = vals.get("Temperature", None)
+    wind_speed = vals.get("WindSpeedMS", None)
+    humidity = vals.get("Humidity", None)
+    radiation = vals.get("RadiationGlobal", None)
 
-    if t is None:
+    if temperature is None:
         return None
-    if w is None or w < 0.0 or rh is None:
-        return t
+    if wind_speed is None or wind_speed < 0.0 or humidity is None:
+        return temperature
 
     # Wind chilling factor
-    chill = 15 + (1-15/37)*t + 15/37*pow(w+1, 0.16)*(t-37)
+    chill = 15 + (1-15/37)*temperature + 15/37*pow(wind_speed+1, 0.16)*(temperature-37)
     # Heat index
-    heat = _summer_simmer(t, rh)
+    heat = _summer_simmer(temperature, humidity)
 
     # Add corrections together
-    feels = t + (chill - t) + (heat - t)
+    feels = temperature + (chill - temperature) + (heat - temperature)
 
     # Perform radiation correction only when radiation is available
-    if rad is not None:
+    if radiation is not None:
         absorption = 0.07
-        feels += 0.7 * absorption * rad / (w + 10) - 0.25
+        feels += 0.7 * absorption * radiation / (wind_speed + 10) - 0.25
 
     return feels
 
 
-def _summer_simmer(t: float, rh: float):
-    if t <= 14.5:
-        return t
+def _summer_simmer(temperature: float, humidity_percent: float):
+    if temperature <= 14.5:
+        return temperature
 
     # Humidity value is expected to be on 0..1 scale
-    r = rh / 100.0
-    rh_ref = 0.5
+    humidity = humidity_percent / 100.0
+    humidity_ref = 0.5
 
     # Calculate the correction
-    return (1.8*t - 0.55*(1-r) * (1.8*t - 26) - 0.55*(1-rh_ref)*26) / (1.8*(1 - 0.55*(1-rh_ref)))
+    return (1.8*temperature - 0.55*(1-humidity) * (1.8*temperature - 26) - 0.55*(1-humidity_ref)*26) \
+        / (1.8*(1 - 0.55*(1-humidity_ref)))
 
 
 def _float_or_none(value: Any) -> Optional[float]:
