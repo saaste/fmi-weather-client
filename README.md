@@ -93,6 +93,7 @@ FMI provides the following commonly used information:
 - Cloud coverage (%)
 - Precipitation intensity (mm/h)
 - Symbol [Documentation in Finnish](https://www.ilmatieteenlaitos.fi/latauspalvelun-pikaohje)
+- Feels like temperature (°C), calculated from weather data [Documentation in Finnish](https://tietopyynto.fi/files/foi/2940/feels_like-1.pdf)
 
 
 There are also other information available. Check [models.py](fmi_weather_client/models.py) and FMI documentation for
