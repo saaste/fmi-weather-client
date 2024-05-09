@@ -55,8 +55,8 @@ def _get_place(data: Dict[str, Any]) -> FMIPlace:
                       ['gml:MultiPoint']['gml:pointMembers']['gml:Point'])
 
     coordinates = place_data['gml:pos'].split(' ', 1)
-    lon = float(coordinates[0])
-    lat = float(coordinates[1])
+    lat = float(coordinates[0])
+    lon = float(coordinates[1])
 
     return FMIPlace(place_data['gml:name'], lat, lon)
 

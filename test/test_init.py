@@ -52,7 +52,7 @@ class FMIWeatherTest(unittest.TestCase):
     @mock.patch('requests.get', side_effect=test_data.mock_coordinate_forecast_response)
     def test_async_get_forecast_by_coordinates(self, mock_get):
         loop = asyncio.get_event_loop()
-        forecast = loop.run_until_complete(fmi_weather_client.async_forecast_by_coordinates(29.742731, 67.583988))
+        forecast = loop.run_until_complete(fmi_weather_client.async_forecast_by_coordinates(67.583988, 29.742731))
         self.assert_coordinate_forecast(forecast)
 
     # CORNER CASES
@@ -128,8 +128,8 @@ class FMIWeatherTest(unittest.TestCase):
 
     def assert_name_forecast(self, forecast):
         self.assertEqual(forecast.place, 'Iisalmi')
-        self.assertEqual(forecast.lat, 27.19067)
-        self.assertEqual(forecast.lon, 63.55915)
+        self.assertEqual(forecast.lat, 63.55915)
+        self.assertEqual(forecast.lon, 27.19067)
         self.assertEqual(len(forecast.forecasts), 12)
         self.assertEqual(forecast.forecasts[0].temperature.value, 12.3)
         self.assertEqual(forecast.forecasts[1].pressure.value, 1000.6)
@@ -137,8 +137,8 @@ class FMIWeatherTest(unittest.TestCase):
 
     def assert_coordinate_forecast(self, forecast):
         self.assertEqual(forecast.place, 'Sauoiva')
-        self.assertEqual(forecast.lat, 29.74273)
-        self.assertEqual(forecast.lon, 67.58399)
+        self.assertEqual(forecast.lat, 67.58399)
+        self.assertEqual(forecast.lon, 29.74273)
         self.assertEqual(len(forecast.forecasts), 12)
         self.assertEqual(forecast.forecasts[0].temperature.value, 6.8)
         self.assertEqual(forecast.forecasts[1].pressure.value, 1005.8)
