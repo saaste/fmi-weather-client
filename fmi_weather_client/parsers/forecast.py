@@ -67,7 +67,9 @@ def _get_datetimes(data: Dict[str, Any]) -> List[datetime]:
                               ['om:result']['gmlcov:MultiPointCoverage']['gml:domainSet']
                               ['gmlcov:SimpleMultiPoint']['gmlcov:positions'].split('\n'))
     for forecast_datetime in forecast_datetimes:
-        parts = forecast_datetime.strip().replace('  ', ' ').split(' ')
+        parts = forecast_datetime.strip().split()
+        if not parts:
+            continue
         timestamp = datetime.utcfromtimestamp(int(parts[2])).replace(tzinfo=timezone.utc)
         result.append(timestamp)
 
@@ -93,7 +95,9 @@ def _get_values(data: Dict[str, Any]) -> List[List[float]]:
                       ['gml:doubleOrNilReasonTupleList'].split('\n'))
 
     for forecast_value_set in value_sets:
-        forecast_values = forecast_value_set.strip().split(' ')
+        forecast_values = forecast_value_set.strip().split()
+        if not forecast_values:
+            continue
         value_set = []
         for value in forecast_values:
             value_set.append(float(value))
