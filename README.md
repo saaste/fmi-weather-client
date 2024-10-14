@@ -13,6 +13,8 @@ For the current weather information, this library requests observations from the
 
 Originally, I created this for myself to get FMI weather data to [Home Assistant](https://www.home-assistant.io/). I am not a meteorologist so if you are more weather-savvy, feel free to contribute and provide improvements! 💖
 
+**FYI: I don't use Home Assistant or this library anymore, so I may not know if things are broken or need updating. However, I'm more than happy to maintain this library, so if you find a bug or a need to update a dependency, feel free to file an issue. Even better, file a pull request that fixes the issues! 😉 💖**
+
 ## How to use
 
 Working example can be found in [example.py](example.py).
