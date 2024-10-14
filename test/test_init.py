@@ -134,6 +134,7 @@ class FMIWeatherTest(unittest.TestCase):
         self.assertEqual(forecast.forecasts[0].temperature.value, 12.3)
         self.assertEqual(forecast.forecasts[1].pressure.value, 1000.6)
         self.assertEqual(forecast.forecasts[4].humidity.value, 80.7)
+        self.assertEqual(forecast.forecasts[5].time.timestamp(), 1663582200)
 
     def assert_coordinate_forecast(self, forecast):
         self.assertEqual(forecast.place, 'Sauoiva')
@@ -143,6 +144,7 @@ class FMIWeatherTest(unittest.TestCase):
         self.assertEqual(forecast.forecasts[0].temperature.value, 6.8)
         self.assertEqual(forecast.forecasts[1].pressure.value, 1005.8)
         self.assertEqual(forecast.forecasts[4].humidity.value, 97.9)
+        self.assertEqual(forecast.forecasts[5].time.timestamp(), 1663582200)
 
 
 if __name__ == '__main__':
