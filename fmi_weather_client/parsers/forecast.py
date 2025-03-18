@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from typing import Any, Dict, List, Optional
 
 import math
@@ -70,7 +70,7 @@ def _get_datetimes(data: Dict[str, Any]) -> List[datetime]:
         parts = forecast_datetime.strip().split()
         if not parts:
             continue
-        timestamp = datetime.utcfromtimestamp(int(parts[2])).replace(tzinfo=timezone.utc)
+        timestamp = datetime.fromtimestamp(int(parts[2]), UTC).replace(tzinfo=timezone.utc)
         result.append(timestamp)
 
     return result
@@ -147,7 +147,7 @@ def _create_weather_data(time, values: Dict[str, float]) -> WeatherData:
         )
 
 
-def _feels_like(vals: Dict[str, float]) -> float:
+def _feels_like(vals: Dict[str, float]) -> float | None:
     # Feels like temperature, ported from:
     # https://github.com/fmidev/smartmet-library-newbase/blob/master/newbase/NFmiMetMath.cpp#L535
     # For more documentation see:
