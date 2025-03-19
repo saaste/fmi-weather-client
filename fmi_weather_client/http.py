@@ -10,6 +10,7 @@ from fmi_weather_client.errors import ClientError, ServerError
 
 _LOGGER = logging.getLogger(__name__)
 
+
 class RequestType(Enum):
     """Possible request types"""
     WEATHER = 0
@@ -54,7 +55,7 @@ def request_forecast_by_coordinates(lat: float, lon: float, timestep_hours: int 
     return _send_request(params)
 
 
-def request_forecast_by_place(place: str, timestep_hours: int = 24, forecast_points: int = 4)  -> str:
+def request_forecast_by_place(place: str, timestep_hours: int = 24, forecast_points: int = 4) -> str:
     """
     Get the latest forecast by place name
 
