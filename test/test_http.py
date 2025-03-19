@@ -9,11 +9,11 @@ class HTTPTest(unittest.TestCase):
 
     def test_create_params_missing_location(self):
         with self.assertRaises(Exception):
-            http._create_params(RequestType.WEATHER, 10, None, None, None)
+            http._create_params(RequestType.WEATHER, 10, 4, None, None, None)
 
     def test_create_params_invalid_request_type(self):
         with self.assertRaises(Exception):
-            http._create_params("UNKNOWN", 10, "Test Place", None, None)
+            http._create_params("UNKNOWN", 10, -1, "Test Place", None, None)
 
     def test_handle_errors_client_error_with_exception_text(self):
         with self.assertRaises(ClientError):

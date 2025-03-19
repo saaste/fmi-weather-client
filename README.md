@@ -46,8 +46,8 @@ except ServerError as err:
 ```
 
 You can get the forecasts using the following functions:
-- `forecast_by_place_name(place_name, [timestep_hours=24])`
-- `forecast_by_coordinates(latitude, longitude, [timestep_hours=24])`
+- `forecast_by_place_name(place_name, [timestep_hours=24], [forecast_points = 4])`
+- `forecast_by_coordinates(latitude, longitude, [timestep_hours=24], [forecast_points = 4])`
 
 Example:
 ```python

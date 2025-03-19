@@ -64,47 +64,51 @@ async def async_weather_by_place_name(name: str) -> Weather:
     return await loop.run_in_executor(None, weather_by_place_name, name)
 
 
-def forecast_by_place_name(name: str, timestep_hours: int = 24):
+def forecast_by_place_name(name: str, timestep_hours: int = 24, forecast_points: int = 4):
     """
     Get the latest forecast by place name.
     :param name: Place name
     :param timestep_hours: Hours between forecasts
+    :param forecast_points: number of forcast points
     :return: Latest forecast
     """
-    response = http.request_forecast_by_place(name, timestep_hours)
+    response = http.request_forecast_by_place(name, timestep_hours, forecast_points)
     return forecast_parser.parse_forecast(response)
 
 
-async def async_forecast_by_place_name(name: str, timestep_hours: int = 24):
+async def async_forecast_by_place_name(name: str, timestep_hours: int = 24, forecast_points: int = 4):
     """
     Get the latest forecast by place name asynchronously.
     :param name: Place name
     :param timestep_hours: Hours between forecasts
+    :param forecast_points: number of forcast points
     :return: Latest forecast
     """
     loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(None, forecast_by_place_name, name, timestep_hours)
+    return await loop.run_in_executor(None, forecast_by_place_name, name, timestep_hours, forecast_points)
 
 
-def forecast_by_coordinates(lat: float, lon: float, timestep_hours: int = 24):
+def forecast_by_coordinates(lat: float, lon: float, timestep_hours: int = 24, forecast_points: int = 4):
     """
     Get the latest forecast by coordinates
     :param lat: Latitude (e.g. 25.67087)
     :param lon: Longitude (e.g. 62.39758)
     :param timestep_hours: Hours between forecasts
+    :param forecast_points: number of forcast points
     :return: Latest forecast
     """
-    response = http.request_forecast_by_coordinates(lat, lon, timestep_hours)
+    response = http.request_forecast_by_coordinates(lat, lon, timestep_hours, forecast_points)
     return forecast_parser.parse_forecast(response)
 
 
-async def async_forecast_by_coordinates(lat: float, lon: float, timestep_hours: int = 24):
+async def async_forecast_by_coordinates(lat: float, lon: float, timestep_hours: int = 24, forecast_points: int = 4):
     """
     Get the latest forecast by coordinates
     :param lat: Latitude (e.g. 25.67087)
     :param lon: Longitude (e.g. 62.39758)
     :param timestep_hours: Hours between forecasts
+    :param forecast_points: number of forcast points
     :return: Latest forecast
     """
     loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(None, forecast_by_coordinates, lat, lon, timestep_hours)
+    return await loop.run_in_executor(None, forecast_by_coordinates, lat, lon, timestep_hours, forecast_points)
