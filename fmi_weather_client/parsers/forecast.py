@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import logging
-from datetime import datetime, timezone, UTC
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 import math
@@ -70,7 +72,7 @@ def _get_datetimes(data: Dict[str, Any]) -> List[datetime]:
         parts = forecast_datetime.strip().split()
         if not parts:
             continue
-        timestamp = datetime.fromtimestamp(int(parts[2]), UTC).replace(tzinfo=timezone.utc)
+        timestamp = datetime.fromtimestamp(int(parts[2]), timezone.utc).replace(tzinfo=timezone.utc)
         result.append(timestamp)
 
     return result

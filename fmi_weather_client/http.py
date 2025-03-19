@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta, UTC
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Any, Dict, Optional
 
@@ -68,6 +68,7 @@ def request_forecast_by_place(place: str, timestep_hours: int = 24, forecast_poi
     return _send_request(params)
 
 
+# pylint: disable=too-many-arguments,too-many-positional-arguments
 def _create_params(request_type: RequestType,
                    timestep_minutes: int,
                    forecast_points: int = 4,
@@ -88,10 +89,10 @@ def _create_params(request_type: RequestType,
         raise ValueError("Missing location parameter")
 
     if request_type is RequestType.WEATHER:
-        end_time = datetime.now(UTC)
+        end_time = datetime.now(timezone.utc)
         start_time = end_time - timedelta(minutes=10)
     elif request_type is RequestType.FORECAST:
-        start_time = datetime.now(UTC)
+        start_time = datetime.now(timezone.utc)
         end_time = start_time + timedelta(minutes=timestep_minutes * forecast_points)
     else:
         raise ValueError(f"Invalid request_type {request_type}")
@@ -127,7 +128,7 @@ def _send_request(params: Dict[str, Any]) -> str:
     :param params: Query parameters
     :return: Response body
     """
-    url = 'http://opendata.fmi.fi/wfs'
+    url = 'https://opendata.fmi.fi/wfs'
 
     _LOGGER.debug("GET request to %s. Parameters: %s", url, params)
     response = requests.get(url, params=params, timeout=10)
