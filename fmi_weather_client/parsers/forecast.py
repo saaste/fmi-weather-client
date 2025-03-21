@@ -7,20 +7,21 @@ from typing import Any, Dict, List, Optional
 import math
 import xmltodict
 
-from fmi_weather_client.models import FMIPlace, Forecast, Value, WeatherData
+from fmi_weather_client.models import FMIPlace, Forecast, Value, WeatherData, RequestType
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def parse_forecast(body: str):
+def parse_fmi_response(body: str, request_type: RequestType):
     """
     Parse FMI forecast response body to dictionary and check errors
     :param body: Forecast response body
+    :param request_type: Request type
     :return: Response body as dictionary
     """
     data = xmltodict.parse(body)
 
-    station = _get_place(data)
+    station = _get_place(data, request_type)
     _LOGGER.debug("Received place: %s (%d, %d)", station.name, station.lat, station.lon)
 
     times = _get_datetimes(data)
@@ -51,10 +52,12 @@ def parse_forecast(body: str):
     return Forecast(station.name, station.lat, station.lon, forecasts)
 
 
-def _get_place(data: Dict[str, Any]) -> FMIPlace:
+def _get_place(data: Dict[str, Any], request_type: RequestType) -> FMIPlace:
     place_data = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']
                       ['om:featureOfInterest']['sams:SF_SpatialSamplingFeature']['sams:shape']
-                      ['gml:MultiPoint']['gml:pointMembers']['gml:Point'])
+                      ['gml:MultiPoint']
+                      [f'gml:{"pointMember" if request_type == RequestType.STATION else "pointMembers"}']
+                      ['gml:Point'])
 
     coordinates = place_data['gml:pos'].split(' ', 1)
     lat = float(coordinates[0])
