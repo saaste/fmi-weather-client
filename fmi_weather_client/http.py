@@ -7,14 +7,9 @@ import requests
 import xmltodict
 
 from fmi_weather_client.errors import ClientError, ServerError
+from fmi_weather_client.models import RequestType
 
 _LOGGER = logging.getLogger(__name__)
-
-
-class RequestType(Enum):
-    """Possible request types"""
-    WEATHER = 0
-    FORECAST = 1
 
 
 def request_weather_by_coordinates(lat: float, lon: float) -> str:
@@ -69,11 +64,34 @@ def request_forecast_by_place(place: str, timestep_hours: int = 24, forecast_poi
     return _send_request(params)
 
 
+def request_observation_station(place: str) -> str:
+    """
+    Get the latest weather information from an observation station.
+
+    :param place: Place name (e.g. Kaisaniemi, Helsinki)
+    :return: Latest weather information
+    """
+    params = _create_params(RequestType.STATION, 10, place=place)
+    return _send_request(params)
+
+
+def request_observation_station_id(fmi_id: int) -> str:
+    """
+    Get the latest weather information from an observation station.
+
+    :param fmi_id: Place fmiSID (https://www.ilmatieteenlaitos.fi/havaintoasemat)
+    :return: Latest weather information
+    """
+    params = _create_params(RequestType.STATION, 10, fmi_id=fmi_id)
+    return _send_request(params)
+
+
 # pylint: disable=too-many-arguments,too-many-positional-arguments
 def _create_params(request_type: RequestType,
                    timestep_minutes: int,
                    forecast_points: int = 4,
                    place: Optional[str] = None,
+                   fmi_id: Optional[int] = None,
                    lat: Optional[float] = None,
                    lon: Optional[float] = None) -> Dict[str, Any]:
     """
@@ -86,15 +104,31 @@ def _create_params(request_type: RequestType,
     :return: Parameters
     """
 
-    if place is None and lat is None and lon is None:
+    if place is None and lat is None and lon is None and fmi_id is None:
         raise ValueError("Missing location parameter")
 
     if request_type is RequestType.WEATHER:
         end_time = datetime.now(timezone.utc)
         start_time = end_time - timedelta(minutes=10)
+        query_id = "fmi::forecast::edited::weather::scandinavia::point::multipointcoverage"
+        parameters = ('Temperature,DewPoint,Pressure,Humidity,WindDirection,WindSpeedMS,'
+                      'WindUMS,WindVMS,WindGust,WeatherSymbol3,TotalCloudCover,LowCloudCover,'
+                      'MediumCloudCover,HighCloudCover,Precipitation1h,RadiationGlobalAccumulation,'
+                      'RadiationNetSurfaceSWAccumulation,RadiationNetSurfaceLWAccumulation,GeopHeight,LandSeaMask')
     elif request_type is RequestType.FORECAST:
         start_time = datetime.now(timezone.utc)
         end_time = start_time + timedelta(minutes=timestep_minutes * forecast_points)
+        query_id = "fmi::forecast::edited::weather::scandinavia::point::multipointcoverage"
+        parameters = ('Temperature,DewPoint,Pressure,Humidity,WindDirection,WindSpeedMS,'
+                      'WindUMS,WindVMS,WindGust,WeatherSymbol3,TotalCloudCover,LowCloudCover,'
+                      'MediumCloudCover,HighCloudCover,Precipitation1h,RadiationGlobalAccumulation,'
+                      'RadiationNetSurfaceSWAccumulation,RadiationNetSurfaceLWAccumulation,GeopHeight,LandSeaMask')
+    elif request_type is RequestType.STATION:
+        end_time = datetime.now(timezone.utc)
+        start_time = end_time - timedelta(minutes=10)
+        query_id = "fmi::observations::weather::multipointcoverage"
+        parameters = ('Temperature,DewPoint,Pressure,Humidity,WindDirection,WindSpeedMS,'
+                      'WindGust,WeatherSymbol3,TotalCloudCover,Precipitation1h')
     else:
         raise ValueError(f"Invalid request_type {request_type}")
 
@@ -102,17 +136,15 @@ def _create_params(request_type: RequestType,
         'service': 'WFS',
         'version': '2.0.0',
         'request': 'getFeature',
-        'storedquery_id': 'fmi::forecast::edited::weather::scandinavia::point::multipointcoverage',
+        'storedquery_id': query_id,
         'timestep': timestep_minutes,
         'starttime': start_time.isoformat(timespec='seconds'),
         'endtime': end_time.isoformat(timespec='seconds'),
-        'parameters': (
-            'Temperature,DewPoint,Pressure,Humidity,WindDirection,WindSpeedMS,'
-            'WindUMS,WindVMS,WindGust,WeatherSymbol3,TotalCloudCover,LowCloudCover,'
-            'MediumCloudCover,HighCloudCover,Precipitation1h,RadiationGlobalAccumulation,'
-            'RadiationNetSurfaceSWAccumulation,RadiationNetSurfaceLWAccumulation,GeopHeight,LandSeaMask'
-        )
+        'parameters': parameters
     }
+
+    if request_type == RequestType.STATION and fmi_id is not None:
+        params['fmisid'] = fmi_id
 
     if lat is not None and lon is not None:
         params['latlon'] = f'{lat},{lon}'
