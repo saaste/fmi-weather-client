@@ -21,6 +21,11 @@ def mock_place_forecast_response(*args, **kwargs):
 def mock_coordinate_forecast_response(*args, **kwargs):
     return __mock_response('valid_coordinate_forecast_response.xml', 200, args, kwargs)
 
+def mock_observation_place_response(*args, **kwargs):
+    return __mock_response('valid_observation_place_response.xml', 200, args, kwargs)
+
+def mock_observation_place_id_response(*args, **kwargs):
+    return __mock_response('valid_observation_place_id_response.xml', 200, args, kwargs)
 
 def mock_nan_response(*args, **kwargs):
     return __mock_response('corner_nan_response.xml', 200, args, kwargs)
