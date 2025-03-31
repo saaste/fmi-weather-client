@@ -17,22 +17,26 @@ def parse_fmi_response(body: str, request_type: RequestType):
     Parse FMI forecast response body to dictionary and check errors
     :param body: Forecast response body
     :param request_type: Request type
-    :return: Response body as dictionary
+    :return: Response body as dictionary or None when observation station does not exist/is invalid type/has no data
     """
     data = xmltodict.parse(body)
 
-    station = _get_place(data, request_type)
-    _LOGGER.debug("Received place: %s (%d, %d)", station.name, station.lat, station.lon)
+    try:
+        station = _get_place(data, request_type)
+        _LOGGER.debug("Received place: %s (%d, %d)", station.name, station.lat, station.lon)
 
-    times = _get_datetimes(data)
-    _LOGGER.debug("Received time points: %d", len(times))
+        times = _get_datetimes(data)
+        _LOGGER.debug("Received time points: %d", len(times))
 
-    types = _get_value_types(data)
-    _LOGGER.debug("Received types: %d", len(types))
+        types = _get_value_types(data)
+        _LOGGER.debug("Received types: %d", len(types))
 
-    value_sets = _get_values(data)
-    _LOGGER.debug("Received value sets: %d", len(value_sets))
+        value_sets = _get_values(data)
+        _LOGGER.debug("Received value sets: %d", len(value_sets))
 
+    except KeyError:
+        _LOGGER.debug("couldn't parse response body. Place is probably invalid or has no data")
+        return None
     # Combine values with types
     typed_value_sets: List[Dict[str, float]] = []
     for value_set in value_sets:
@@ -56,10 +60,11 @@ def _get_place(data: Dict[str, Any], request_type: RequestType) -> FMIPlace:
     place_data = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']
                       ['om:featureOfInterest']['sams:SF_SpatialSamplingFeature']['sams:shape']
                       ['gml:MultiPoint']
-                      [f'gml:{"pointMember" if request_type == RequestType.STATION else "pointMembers"}']
+                      [f'gml:{"pointMember" if request_type == RequestType.OBSERVATION else "pointMembers"}']
                       ['gml:Point'])
 
     coordinates = place_data['gml:pos'].split(' ', 1)
+
     lat = float(coordinates[0])
     lon = float(coordinates[1])
 

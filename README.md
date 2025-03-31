@@ -65,6 +65,25 @@ except ServerError as err:
 
 ```
 
+You can get the observation data from a station ID [shown here](https://www.ilmatieteenlaitos.fi/havaintoasemat) using the following functions:
+- `observation_by_station_id(fmi_sid)`
+
+Example:
+```python
+import fmi_weather_client as fmi
+from fmi_weather_client.errors import ClientError, ServerError
+
+try:
+    weather = fmi.observation_by_station_id(101794)
+    if weather is not None:
+         print(f"Temperature at {weather.place} is {weather.data.temperature}")
+except ClientError as err:
+    print(f"Client error with status {err.status_code}: {err.message}")
+except ServerError as err:
+    print(f"Server error with status {err.status_code}: {err.body}")
+
+```
+
 All functions have asynchronous versions available with `async_` prefix.
 
 ### Errors

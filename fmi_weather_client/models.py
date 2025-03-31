@@ -7,7 +7,7 @@ class RequestType(Enum):
     """Possible request types"""
     WEATHER = 0
     FORECAST = 1
-    STATION = 2
+    OBSERVATION = 2
 
 
 class FMIPlace(NamedTuple):

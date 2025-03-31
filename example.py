@@ -9,7 +9,7 @@ try:
     helsinki_forecast = fmi.forecast_by_place_name("Helsinki")
 
     # Get observation data
-    oulu_observation = fmi.observation_station_by_place_id(101794)
+    oulu_observation = fmi.observation_by_station_id(101794)
 
     # Print current temperature
     print()

@@ -21,11 +21,10 @@ def mock_place_forecast_response(*args, **kwargs):
 def mock_coordinate_forecast_response(*args, **kwargs):
     return __mock_response('valid_coordinate_forecast_response.xml', 200, args, kwargs)
 
-def mock_observation_place_response(*args, **kwargs):
-    return __mock_response('valid_observation_place_response.xml', 200, args, kwargs)
 
-def mock_observation_place_id_response(*args, **kwargs):
-    return __mock_response('valid_observation_place_id_response.xml', 200, args, kwargs)
+def mock_observation_by_station_id_response(*args, **kwargs):
+    return __mock_response('valid_observation_by_station_id_response.xml', 200, args, kwargs)
+
 
 def mock_nan_response(*args, **kwargs):
     return __mock_response('corner_nan_response.xml', 200, args, kwargs)
@@ -37,6 +36,10 @@ def mock_no_location_exception_response(*args, **kwargs):
 
 def mock_invalid_lat_lon_exception_response(*args, **kwargs):
     return __mock_response('error_invalid_lat_lon_response.xml', 400, args, kwargs)
+
+
+def mock_invalid_station_id_response(*args, **kwargs):
+    return __mock_response('error_invalid_station_id_response.xml', 200, args, kwargs)
 
 
 def mock_no_data_available_exception_response(*args, **kwargs):

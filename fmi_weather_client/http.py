@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime, timedelta, timezone
-from enum import Enum
 from typing import Any, Dict, Optional
 
 import requests
@@ -64,25 +63,14 @@ def request_forecast_by_place(place: str, timestep_hours: int = 24, forecast_poi
     return _send_request(params)
 
 
-def request_observation_station(place: str) -> str:
+def request_observation_by_station_id(fmi_sid: int) -> str:
     """
     Get the latest weather information from an observation station.
 
-    :param place: Place name (e.g. Kaisaniemi, Helsinki)
+    :param fmi_sid: Place fmiSID (https://www.ilmatieteenlaitos.fi/havaintoasemat)
     :return: Latest weather information
     """
-    params = _create_params(RequestType.STATION, 10, place=place)
-    return _send_request(params)
-
-
-def request_observation_station_id(fmi_id: int) -> str:
-    """
-    Get the latest weather information from an observation station.
-
-    :param fmi_id: Place fmiSID (https://www.ilmatieteenlaitos.fi/havaintoasemat)
-    :return: Latest weather information
-    """
-    params = _create_params(RequestType.STATION, 10, fmi_id=fmi_id)
+    params = _create_params(RequestType.OBSERVATION, 10, fmi_sid=fmi_sid)
     return _send_request(params)
 
 
@@ -91,7 +79,7 @@ def _create_params(request_type: RequestType,
                    timestep_minutes: int,
                    forecast_points: int = 4,
                    place: Optional[str] = None,
-                   fmi_id: Optional[int] = None,
+                   fmi_sid: Optional[int] = None,
                    lat: Optional[float] = None,
                    lon: Optional[float] = None) -> Dict[str, Any]:
     """
@@ -104,7 +92,7 @@ def _create_params(request_type: RequestType,
     :return: Parameters
     """
 
-    if place is None and lat is None and lon is None and fmi_id is None:
+    if place is None and lat is None and lon is None and fmi_sid is None:
         raise ValueError("Missing location parameter")
 
     if request_type is RequestType.WEATHER:
@@ -123,9 +111,9 @@ def _create_params(request_type: RequestType,
                       'WindUMS,WindVMS,WindGust,WeatherSymbol3,TotalCloudCover,LowCloudCover,'
                       'MediumCloudCover,HighCloudCover,Precipitation1h,RadiationGlobalAccumulation,'
                       'RadiationNetSurfaceSWAccumulation,RadiationNetSurfaceLWAccumulation,GeopHeight,LandSeaMask')
-    elif request_type is RequestType.STATION:
+    elif request_type is RequestType.OBSERVATION:
         end_time = datetime.now(timezone.utc)
-        start_time = end_time - timedelta(minutes=10)
+        start_time = end_time - timedelta(minutes=20)
         query_id = "fmi::observations::weather::multipointcoverage"
         parameters = ('Temperature,DewPoint,Pressure,Humidity,WindDirection,WindSpeedMS,'
                       'WindGust,WeatherSymbol3,TotalCloudCover,Precipitation1h')
@@ -143,8 +131,8 @@ def _create_params(request_type: RequestType,
         'parameters': parameters
     }
 
-    if request_type == RequestType.STATION and fmi_id is not None:
-        params['fmisid'] = fmi_id
+    if request_type == RequestType.OBSERVATION and fmi_sid is not None:
+        params['fmisid'] = fmi_sid
 
     if lat is not None and lon is not None:
         params['latlon'] = f'{lat},{lon}'

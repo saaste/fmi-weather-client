@@ -114,55 +114,28 @@ async def async_forecast_by_coordinates(lat: float, lon: float, timestep_hours: 
     return await loop.run_in_executor(None, forecast_by_coordinates, lat, lon, timestep_hours, forecast_points)
 
 
-def observation_station_by_place(place: str) -> Optional[Weather]:
+def observation_by_station_id(fmi_sid: int) -> Optional[Weather]:
     """
     Get the latest weather information of an observation station by place name.
-    :param place: Place name (e.g. Kaisaniemi, Helsinki)
+    :param fmi_sid: Place fmiSID (https://www.ilmatieteenlaitos.fi/havaintoasemat)
     :return: Latest weather information if available, None otherwise
     """
 
-    response = http.request_observation_station(place)
-    forecast = forecast_parser.parse_fmi_response(response, RequestType.STATION)
+    response = http.request_observation_by_station_id(fmi_sid)
+    forecast = forecast_parser.parse_fmi_response(response, RequestType.OBSERVATION)
 
-    if len(forecast.forecasts) == 0:
+    if forecast is None or len(forecast.forecasts) == 0:
         return None
 
     weather_state = forecast.forecasts[-1]
     return Weather(forecast.place, forecast.lat, forecast.lon, weather_state)
 
 
-async def async_observation_station_by_place(place: str) -> Weather:
+async def async_observation_by_station_id(fmi_sid: int) -> Weather:
     """
     Get the latest weather information of an observation station by place name.
-    :param place: Place name (e.g. Kaisaniemi, Helsinki)
+    :param fmi_sid: Place fmiSID (https://www.ilmatieteenlaitos.fi/havaintoasemat)
     :return: Latest weather information if available, None otherwise
     """
     loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(None, observation_station_by_place, place)
-
-
-def observation_station_by_place_id(fmi_id: int) -> Optional[Weather]:
-    """
-    Get the latest weather information of an observation station by place name.
-    :param fmi_id: Place fmiSID (https://www.ilmatieteenlaitos.fi/havaintoasemat)
-    :return: Latest weather information if available, None otherwise
-    """
-
-    response = http.request_observation_station_id(fmi_id)
-    forecast = forecast_parser.parse_fmi_response(response, RequestType.STATION)
-
-    if len(forecast.forecasts) == 0:
-        return None
-
-    weather_state = forecast.forecasts[-1]
-    return Weather(forecast.place, forecast.lat, forecast.lon, weather_state)
-
-
-async def async_observation_station_by_place_id(fmi_id: int) -> Weather:
-    """
-    Get the latest weather information of an observation station by place name.
-    :param fmi_id: Place fmiSID (https://www.ilmatieteenlaitos.fi/havaintoasemat)
-    :return: Latest weather information if available, None otherwise
-    """
-    loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(None, observation_station_by_place_id, fmi_id)
+    return await loop.run_in_executor(None, observation_by_station_id, fmi_sid)

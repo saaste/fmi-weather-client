@@ -55,26 +55,15 @@ class FMIWeatherTest(unittest.TestCase):
         forecast = loop.run_until_complete(fmi_weather_client.async_forecast_by_coordinates(67.583988, 29.742731))
         self.assert_coordinate_forecast(forecast)
 
-    @mock.patch('requests.get', side_effect=test_data.mock_observation_place_response)
-    def test_get_observation_place(self, mock_get):
-        weather = fmi_weather_client.observation_station_by_place('Oulu')
-        self.assert_observation_name(weather)
-
-    @mock.patch('requests.get', side_effect=test_data.mock_observation_place_response)
-    def test_async_get_observation_place(self, mock_get):
-        loop = asyncio.get_event_loop()
-        weather = loop.run_until_complete(fmi_weather_client.async_observation_station_by_place('Oulu'))
-        self.assert_observation_name(weather)
-
-    @mock.patch('requests.get', side_effect=test_data.mock_observation_place_id_response)
-    def test_get_observation_place_id(self, mock_get):
-        weather = fmi_weather_client.observation_station_by_place_id(101794)
+    @mock.patch('requests.get', side_effect=test_data.mock_observation_by_station_id_response)
+    def test_get_observation_by_station_id(self, mock_get):
+        weather = fmi_weather_client.observation_by_station_id(101794)
         self.assert_observation_id(weather)
 
-    @mock.patch('requests.get', side_effect=test_data.mock_observation_place_id_response)
-    def test_async_get_observation_place_id(self, mock_get):
+    @mock.patch('requests.get', side_effect=test_data.mock_observation_by_station_id_response)
+    def test_async_get_observation_by_station_id(self, mock_get):
         loop = asyncio.get_event_loop()
-        weather = loop.run_until_complete(fmi_weather_client.async_observation_station_by_place_id(101794))
+        weather = loop.run_until_complete(fmi_weather_client.async_observation_by_station_id(101794))
         self.assert_observation_id(weather)
 
     # CORNER CASES
@@ -93,6 +82,11 @@ class FMIWeatherTest(unittest.TestCase):
         self.assertIsNotNone(forecast_name)
         self.assertEqual(forecast_coord.forecasts, [])
         self.assertEqual(forecast_name.forecasts, [])
+
+    @mock.patch('requests.get', side_effect=test_data.mock_invalid_station_id_response)
+    def test_invalid_observation_id(self, mock_get):
+        weather = fmi_weather_client.observation_by_station_id(103124)
+        self.assertIsNone(weather)
 
     # ERROR CASES
     @mock.patch('requests.get', side_effect=test_data.mock_no_location_exception_response)
