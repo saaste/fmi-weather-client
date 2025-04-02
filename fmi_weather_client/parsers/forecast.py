@@ -8,6 +8,7 @@ import math
 import xmltodict
 
 from fmi_weather_client.models import FMIPlace, Forecast, Value, WeatherData, RequestType
+from fmi_weather_client.parsers.errors import StationTypeError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -22,6 +23,8 @@ def parse_fmi_response(body: str, request_type: RequestType):
     data = xmltodict.parse(body)
 
     try:
+        _check_valid(data)
+
         station = _get_place(data, request_type)
         _LOGGER.debug("Received place: %s (%d, %d)", station.name, station.lat, station.lon)
 
@@ -34,9 +37,11 @@ def parse_fmi_response(body: str, request_type: RequestType):
         value_sets = _get_values(data)
         _LOGGER.debug("Received value sets: %d", len(value_sets))
 
-    except KeyError:
-        _LOGGER.debug("couldn't parse response body. Place is probably invalid or has no data")
-        return None
+    except Exception as e:
+        _LOGGER.error("couldn't parse response body:")
+        _LOGGER.error(data)
+        _LOGGER.error(body)
+        raise e
     # Combine values with types
     typed_value_sets: List[Dict[str, float]] = []
     for value_set in value_sets:
@@ -54,6 +59,12 @@ def parse_fmi_response(body: str, request_type: RequestType):
     _LOGGER.debug("Received non-empty value sets: %d", len(forecasts))
 
     return Forecast(station.name, station.lat, station.lon, forecasts)
+
+
+def _check_valid(data: Dict[str, Any]):
+    if data['wfs:FeatureCollection']['@numberMatched'] == '0':
+        raise StationTypeError("no matched places/observation stations")
+    return True
 
 
 def _get_place(data: Dict[str, Any], request_type: RequestType) -> FMIPlace:

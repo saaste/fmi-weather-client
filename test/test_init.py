@@ -6,6 +6,7 @@ import asyncio
 import fmi_weather_client
 import test.test_data as test_data
 from fmi_weather_client.errors import ClientError, ServerError
+from fmi_weather_client.parsers.errors import StationTypeError
 
 
 class FMIWeatherTest(unittest.TestCase):
@@ -85,8 +86,8 @@ class FMIWeatherTest(unittest.TestCase):
 
     @mock.patch('requests.get', side_effect=test_data.mock_invalid_station_id_response)
     def test_invalid_observation_id(self, mock_get):
-        weather = fmi_weather_client.observation_by_station_id(103124)
-        self.assertIsNone(weather)
+        with self.assertRaises(StationTypeError):
+            fmi_weather_client.observation_by_station_id(103124)
 
     # ERROR CASES
     @mock.patch('requests.get', side_effect=test_data.mock_no_location_exception_response)
