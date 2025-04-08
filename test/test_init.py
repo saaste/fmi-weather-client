@@ -6,7 +6,6 @@ import asyncio
 import fmi_weather_client
 import test.test_data as test_data
 from fmi_weather_client.errors import ClientError, ServerError
-from fmi_weather_client.parsers.errors import StationTypeError
 
 
 class FMIWeatherTest(unittest.TestCase):
@@ -84,11 +83,6 @@ class FMIWeatherTest(unittest.TestCase):
         self.assertEqual(forecast_coord.forecasts, [])
         self.assertEqual(forecast_name.forecasts, [])
 
-    @mock.patch('requests.get', side_effect=test_data.mock_invalid_station_id_response)
-    def test_invalid_observation_id(self, mock_get):
-        with self.assertRaises(StationTypeError):
-            fmi_weather_client.observation_by_station_id(103124)
-
     # ERROR CASES
     @mock.patch('requests.get', side_effect=test_data.mock_no_location_exception_response)
     def test_no_location_exception_response(self, mock_get):
@@ -109,6 +103,11 @@ class FMIWeatherTest(unittest.TestCase):
     def test_server_error_response(self, mock_get):
         with self.assertRaises(ServerError):
             fmi_weather_client.weather_by_coordinates(27.31317, 63.14343)
+
+    @mock.patch('requests.get', side_effect=test_data.mock_invalid_station_id_response)
+    def test_invalid_observation_id(self, mock_get):
+        with self.assertRaises(ClientError):
+            fmi_weather_client.observation_by_station_id(103124)
 
     def assert_name_weather(self, weather):
         self.assertEqual(weather.place, 'Iisalmi')
@@ -174,6 +173,7 @@ class FMIWeatherTest(unittest.TestCase):
         self.assertEqual(weather.data.time.timestamp(), 1742545800)
         self.assertEqual(weather.data.temperature.value, -7.2)
         self.assertEqual(weather.data.wind_speed.value, 2.6)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -8,7 +8,6 @@ import math
 import xmltodict
 
 from fmi_weather_client.models import FMIPlace, Forecast, Value, WeatherData, RequestType
-from fmi_weather_client.parsers.errors import StationTypeError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -23,8 +22,6 @@ def parse_fmi_response(body: str, request_type: RequestType):
     data = xmltodict.parse(body)
 
     try:
-        _check_valid(data)
-
         station = _get_place(data, request_type)
         _LOGGER.debug("Received place: %s (%d, %d)", station.name, station.lat, station.lon)
 
@@ -59,12 +56,6 @@ def parse_fmi_response(body: str, request_type: RequestType):
     _LOGGER.debug("Received non-empty value sets: %d", len(forecasts))
 
     return Forecast(station.name, station.lat, station.lon, forecasts)
-
-
-def _check_valid(data: Dict[str, Any]):
-    if data['wfs:FeatureCollection']['@numberMatched'] == '0':
-        raise StationTypeError("no matched places/observation stations")
-    return True
 
 
 def _get_place(data: Dict[str, Any], request_type: RequestType) -> FMIPlace:
