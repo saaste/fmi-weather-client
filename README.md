@@ -25,10 +25,11 @@ Working example can be found in [example.py](example.py).
 $ pip install fmi-weather-client 
 ```
 
-### Get weather and forecasts
+### Get weather, forecasts, and observations
 You can get the weather using the following functions:
 - `weather_by_place_name(place_name)`
 - `weather_by_coordinates(latitude, longitude)`
+- `observation_by_station_id(fmi_station_id)`
 
 Example:
 ```python
@@ -65,8 +66,10 @@ except ServerError as err:
 
 ```
 
-You can get the observation data from a station ID [shown here](https://www.ilmatieteenlaitos.fi/havaintoasemat) using the following functions:
+You can get the observation data from a station using the following functions:
 - `observation_by_station_id(fmi_sid)`
+
+To get a weather observation from a station, you must provide a station ID. IDs can be found on [FMI's station list](https://www.ilmatieteenlaitos.fi/havaintoasemat). Note that weather observations are available only from **weather stations**. These are the ones with `sää` in the `Ryhmä` column.
 
 Example:
 ```python
