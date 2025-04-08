@@ -5,11 +5,11 @@ try:
     # Get current weather in Kilpisjärvi using coordinates
     kilpisjarvi_weather = fmi.weather_by_coordinates(69.0478, 20.7982)
 
-    # Get forecast for Helsinki
-    helsinki_forecast = fmi.forecast_by_place_name("Helsinki")
-
     # Get observation data
     oulu_observation = fmi.observation_by_station_id(101794)
+
+    # Get forecast for Helsinki
+    helsinki_forecast = fmi.forecast_by_place_name("Helsinki")
 
     # Print current temperature
     print()

@@ -155,6 +155,7 @@ def _send_request(params: Dict[str, Any]) -> str:
     response = requests.get(url, params=params, timeout=10)
 
     if response.status_code == 200:
+        _validate_response(response)
         _LOGGER.debug("GET response from %s in %d ms. Status: %d.",
                       url,
                       response.elapsed.microseconds / 1000,
@@ -163,6 +164,16 @@ def _send_request(params: Dict[str, Any]) -> str:
         _handle_errors(response)
 
     return response.text
+
+
+def _validate_response(response: requests.Response):
+    """Validate response body"""
+    data = xmltodict.parse(response.text)
+
+    if ('wfs:FeatureCollection' in data and
+            '@numberMatched' in data['wfs:FeatureCollection'] and
+            data['wfs:FeatureCollection']['@numberMatched'] == '0'):
+        raise ClientError(200, "Valid data source not found with given parameters")
 
 
 def _handle_errors(response: requests.Response):
