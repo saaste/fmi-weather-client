@@ -3,7 +3,7 @@ from typing import Optional
 import asyncio
 
 from fmi_weather_client import http
-from fmi_weather_client.models import Weather
+from fmi_weather_client.models import Weather, RequestType
 from fmi_weather_client.parsers import forecast as forecast_parser
 
 
@@ -16,7 +16,7 @@ def weather_by_coordinates(lat: float, lon: float) -> Optional[Weather]:
     :return: Latest weather information if available; None otherwise
     """
     response = http.request_weather_by_coordinates(lat, lon)
-    forecast = forecast_parser.parse_forecast(response)
+    forecast = forecast_parser.parse_fmi_response(response, RequestType.WEATHER)
 
     if len(forecast.forecasts) == 0:
         return None
@@ -45,7 +45,7 @@ def weather_by_place_name(name: str) -> Optional[Weather]:
     :return: Latest weather information if available; None otherwise
     """
     response = http.request_weather_by_place(name)
-    forecast = forecast_parser.parse_forecast(response)
+    forecast = forecast_parser.parse_fmi_response(response, RequestType.WEATHER)
     if len(forecast.forecasts) == 0:
         return None
 
@@ -73,7 +73,7 @@ def forecast_by_place_name(name: str, timestep_hours: int = 24, forecast_points:
     :return: Latest forecast
     """
     response = http.request_forecast_by_place(name, timestep_hours, forecast_points)
-    return forecast_parser.parse_forecast(response)
+    return forecast_parser.parse_fmi_response(response, RequestType.FORECAST)
 
 
 async def async_forecast_by_place_name(name: str, timestep_hours: int = 24, forecast_points: int = 4):
@@ -98,7 +98,7 @@ def forecast_by_coordinates(lat: float, lon: float, timestep_hours: int = 24, fo
     :return: Latest forecast
     """
     response = http.request_forecast_by_coordinates(lat, lon, timestep_hours, forecast_points)
-    return forecast_parser.parse_forecast(response)
+    return forecast_parser.parse_fmi_response(response, RequestType.FORECAST)
 
 
 async def async_forecast_by_coordinates(lat: float, lon: float, timestep_hours: int = 24, forecast_points: int = 4):
@@ -112,3 +112,30 @@ async def async_forecast_by_coordinates(lat: float, lon: float, timestep_hours: 
     """
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(None, forecast_by_coordinates, lat, lon, timestep_hours, forecast_points)
+
+
+def observation_by_station_id(fmi_sid: int) -> Optional[Weather]:
+    """
+    Get the latest weather information of an observation station by place name.
+    :param fmi_sid: Place fmiSID (https://www.ilmatieteenlaitos.fi/havaintoasemat)
+    :return: Latest weather information if available, None otherwise
+    """
+
+    response = http.request_observation_by_station_id(fmi_sid)
+    forecast = forecast_parser.parse_fmi_response(response, RequestType.OBSERVATION)
+
+    if forecast is None or len(forecast.forecasts) == 0:
+        return None
+
+    weather_state = forecast.forecasts[-1]
+    return Weather(forecast.place, forecast.lat, forecast.lon, weather_state)
+
+
+async def async_observation_by_station_id(fmi_sid: int) -> Weather:
+    """
+    Get the latest weather information of an observation station by place name.
+    :param fmi_sid: Place fmiSID (https://www.ilmatieteenlaitos.fi/havaintoasemat)
+    :return: Latest weather information if available, None otherwise
+    """
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, observation_by_station_id, fmi_sid)

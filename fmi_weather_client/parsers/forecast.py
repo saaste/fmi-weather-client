@@ -7,31 +7,41 @@ from typing import Any, Dict, List, Optional
 import math
 import xmltodict
 
-from fmi_weather_client.models import FMIPlace, Forecast, Value, WeatherData
+from fmi_weather_client.models import FMIPlace, Forecast, Value, WeatherData, RequestType
+from fmi_weather_client.parsers.errors import StationTypeError
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def parse_forecast(body: str):
+def parse_fmi_response(body: str, request_type: RequestType):
     """
     Parse FMI forecast response body to dictionary and check errors
     :param body: Forecast response body
-    :return: Response body as dictionary
+    :param request_type: Request type
+    :return: Response body as dictionary or None when observation station does not exist/is invalid type/has no data
     """
     data = xmltodict.parse(body)
 
-    station = _get_place(data)
-    _LOGGER.debug("Received place: %s (%d, %d)", station.name, station.lat, station.lon)
+    try:
+        _check_valid(data)
 
-    times = _get_datetimes(data)
-    _LOGGER.debug("Received time points: %d", len(times))
+        station = _get_place(data, request_type)
+        _LOGGER.debug("Received place: %s (%d, %d)", station.name, station.lat, station.lon)
 
-    types = _get_value_types(data)
-    _LOGGER.debug("Received types: %d", len(types))
+        times = _get_datetimes(data)
+        _LOGGER.debug("Received time points: %d", len(times))
 
-    value_sets = _get_values(data)
-    _LOGGER.debug("Received value sets: %d", len(value_sets))
+        types = _get_value_types(data)
+        _LOGGER.debug("Received types: %d", len(types))
 
+        value_sets = _get_values(data)
+        _LOGGER.debug("Received value sets: %d", len(value_sets))
+
+    except Exception as e:
+        _LOGGER.error("couldn't parse response body:")
+        _LOGGER.error(data)
+        _LOGGER.error(body)
+        raise e
     # Combine values with types
     typed_value_sets: List[Dict[str, float]] = []
     for value_set in value_sets:
@@ -51,12 +61,21 @@ def parse_forecast(body: str):
     return Forecast(station.name, station.lat, station.lon, forecasts)
 
 
-def _get_place(data: Dict[str, Any]) -> FMIPlace:
+def _check_valid(data: Dict[str, Any]):
+    if data['wfs:FeatureCollection']['@numberMatched'] == '0':
+        raise StationTypeError("no matched places/observation stations")
+    return True
+
+
+def _get_place(data: Dict[str, Any], request_type: RequestType) -> FMIPlace:
     place_data = (data['wfs:FeatureCollection']['wfs:member']['omso:GridSeriesObservation']
                       ['om:featureOfInterest']['sams:SF_SpatialSamplingFeature']['sams:shape']
-                      ['gml:MultiPoint']['gml:pointMembers']['gml:Point'])
+                      ['gml:MultiPoint']
+                      [f'gml:{"pointMember" if request_type == RequestType.OBSERVATION else "pointMembers"}']
+                      ['gml:Point'])
 
     coordinates = place_data['gml:pos'].split(' ', 1)
+
     lat = float(coordinates[0])
     lon = float(coordinates[1])
 

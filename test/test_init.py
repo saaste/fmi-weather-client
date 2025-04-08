@@ -6,6 +6,7 @@ import asyncio
 import fmi_weather_client
 import test.test_data as test_data
 from fmi_weather_client.errors import ClientError, ServerError
+from fmi_weather_client.parsers.errors import StationTypeError
 
 
 class FMIWeatherTest(unittest.TestCase):
@@ -55,6 +56,17 @@ class FMIWeatherTest(unittest.TestCase):
         forecast = loop.run_until_complete(fmi_weather_client.async_forecast_by_coordinates(67.583988, 29.742731))
         self.assert_coordinate_forecast(forecast)
 
+    @mock.patch('requests.get', side_effect=test_data.mock_observation_by_station_id_response)
+    def test_get_observation_by_station_id(self, mock_get):
+        weather = fmi_weather_client.observation_by_station_id(101794)
+        self.assert_observation_id(weather)
+
+    @mock.patch('requests.get', side_effect=test_data.mock_observation_by_station_id_response)
+    def test_async_get_observation_by_station_id(self, mock_get):
+        loop = asyncio.get_event_loop()
+        weather = loop.run_until_complete(fmi_weather_client.async_observation_by_station_id(101794))
+        self.assert_observation_id(weather)
+
     # CORNER CASES
     @mock.patch('requests.get', side_effect=test_data.mock_nan_response)
     def test_nil_weather_response(self, mock_get):
@@ -71,6 +83,11 @@ class FMIWeatherTest(unittest.TestCase):
         self.assertIsNotNone(forecast_name)
         self.assertEqual(forecast_coord.forecasts, [])
         self.assertEqual(forecast_name.forecasts, [])
+
+    @mock.patch('requests.get', side_effect=test_data.mock_invalid_station_id_response)
+    def test_invalid_observation_id(self, mock_get):
+        with self.assertRaises(StationTypeError):
+            fmi_weather_client.observation_by_station_id(103124)
 
     # ERROR CASES
     @mock.patch('requests.get', side_effect=test_data.mock_no_location_exception_response)
@@ -146,6 +163,17 @@ class FMIWeatherTest(unittest.TestCase):
         self.assertEqual(forecast.forecasts[4].humidity.value, 97.9)
         self.assertEqual(forecast.forecasts[5].time.timestamp(), 1663582200)
 
+    def assert_observation_name(self, weather):
+        self.assertEqual(weather.place, 'Oulu Kaukovainio')
+        self.assertEqual(weather.data.time.timestamp(), 1742545800)
+        self.assertEqual(weather.data.temperature.value, -3.6)
+        self.assertEqual(weather.data.humidity.value, 60.0)
+
+    def assert_observation_id(self, weather):
+        self.assertEqual(weather.place, 'Oulu Vihreäsaari satama')
+        self.assertEqual(weather.data.time.timestamp(), 1742545800)
+        self.assertEqual(weather.data.temperature.value, -7.2)
+        self.assertEqual(weather.data.wind_speed.value, 2.6)
 
 if __name__ == '__main__':
     unittest.main()

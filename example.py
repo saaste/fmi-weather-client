@@ -8,9 +8,14 @@ try:
     # Get forecast for Helsinki
     helsinki_forecast = fmi.forecast_by_place_name("Helsinki")
 
+    # Get observation data
+    oulu_observation = fmi.observation_by_station_id(101794)
+
     # Print current temperature
     print()
     print(f"Temperature @ {kilpisjarvi_weather.place}: {kilpisjarvi_weather.data.temperature}")
+
+    print(f"Temperature @ {oulu_observation.place}: {oulu_observation.data.temperature}")
 
     # Print temperature forecasts
     print()

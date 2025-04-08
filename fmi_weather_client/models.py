@@ -1,5 +1,13 @@
 from datetime import datetime
+from enum import Enum
 from typing import List, Optional, NamedTuple
+
+
+class RequestType(Enum):
+    """Possible request types"""
+    WEATHER = 0
+    FORECAST = 1
+    OBSERVATION = 2
 
 
 class FMIPlace(NamedTuple):
