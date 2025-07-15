@@ -116,7 +116,7 @@ async def async_forecast_by_coordinates(lat: float, lon: float, timestep_hours: 
 
 def observation_by_station_id(fmi_sid: int) -> Optional[Weather]:
     """
-    Get the latest weather information of an observation station by place name.
+    Get the latest weather information of an observation station by station id.
     :param fmi_sid: Place fmiSID (https://www.ilmatieteenlaitos.fi/havaintoasemat)
     :return: Latest weather information if available, None otherwise
     """
@@ -133,9 +133,35 @@ def observation_by_station_id(fmi_sid: int) -> Optional[Weather]:
 
 async def async_observation_by_station_id(fmi_sid: int) -> Weather:
     """
-    Get the latest weather information of an observation station by place name.
+    Get the latest weather information of an observation station by station id.
     :param fmi_sid: Place fmiSID (https://www.ilmatieteenlaitos.fi/havaintoasemat)
     :return: Latest weather information if available, None otherwise
     """
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(None, observation_by_station_id, fmi_sid)
+
+
+def observation_by_place(place: str) -> Optional[Weather]:
+    """
+    Get the latest weather information by place name
+    :param place: Place name (e.g. Kaisaniemi, Helsinki)
+    :return: Latest weather information if available, None otherwise
+    """
+    response = http.request_observation_by_place(place)
+    forecast = forecast_parser.parse_fmi_response(response, RequestType.OBSERVATION)
+
+    if forecast is None or len(forecast.forecasts) == 0:
+        return None
+
+    weather_state = forecast.forecasts[-1]
+    return Weather(forecast.place, forecast.lat, forecast.lon, weather_state)
+
+
+async def async_observation_by_place(place: str) -> Optional[Weather]:
+    """
+    Get the latest weather information by place name
+    :param place: Place name (e.g. Kaisaniemi, Helsinki)
+    :return: Latest weather information if available, None otherwise
+    """
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, observation_by_place, place)
