@@ -26,6 +26,10 @@ def mock_observation_by_station_id_response(*args, **kwargs):
     return __mock_response('valid_observation_by_station_id_response.xml', 200, args, kwargs)
 
 
+def mock_observation_by_place_response(*args, **kwargs):
+    return __mock_response('valid_observation_by_place_response.xml', 200, args, kwargs)
+
+
 def mock_nan_response(*args, **kwargs):
     return __mock_response('corner_nan_response.xml', 200, args, kwargs)
 
