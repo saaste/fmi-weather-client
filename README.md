@@ -30,6 +30,7 @@ You can get the weather using the following functions:
 - `weather_by_place_name(place_name)`
 - `weather_by_coordinates(latitude, longitude)`
 - `observation_by_station_id(fmi_station_id)`
+- `observation_by_place(place_name)`
 
 Example:
 ```python
