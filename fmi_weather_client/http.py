@@ -74,6 +74,17 @@ def request_observation_by_station_id(fmi_sid: int) -> str:
     return _send_request(params)
 
 
+def request_observation_by_place(place: str) -> str:
+    """
+    Get the latest weather information by place name.
+
+    :param place: Place name (e.g. Kaisaniemi, Helsinki)
+    :return: Latest weather information
+    """
+    params = _create_params(RequestType.OBSERVATION, 10, place=place)
+    return _send_request(params)
+
+
 # pylint: disable=too-many-arguments,too-many-positional-arguments
 def _create_params(request_type: RequestType,
                    timestep_minutes: int,
