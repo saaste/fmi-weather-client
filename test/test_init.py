@@ -66,6 +66,17 @@ class FMIWeatherTest(unittest.TestCase):
         weather = loop.run_until_complete(fmi_weather_client.async_observation_by_station_id(101794))
         self.assert_observation_id(weather)
 
+    @mock.patch('requests.get', side_effect=test_data.mock_observation_by_place_response)
+    def test_get_observation_by_place(self, mock_get):
+        weather = fmi_weather_client.observation_by_place("Tampere")
+        self.assert_observation_place(weather)
+
+    @mock.patch('requests.get', side_effect=test_data.mock_observation_by_place_response)
+    def test_async_get_observation_by_place(self, mock_get):
+        loop = asyncio.get_event_loop()
+        weather = loop.run_until_complete(fmi_weather_client.async_observation_by_place("Tampere"))
+        self.assert_observation_place(weather)
+
     # CORNER CASES
     @mock.patch('requests.get', side_effect=test_data.mock_nan_response)
     def test_nil_weather_response(self, mock_get):
@@ -173,6 +184,12 @@ class FMIWeatherTest(unittest.TestCase):
         self.assertEqual(weather.data.time.timestamp(), 1742545800)
         self.assertEqual(weather.data.temperature.value, -7.2)
         self.assertEqual(weather.data.wind_speed.value, 2.6)
+
+    def assert_observation_place(self, weather):
+        self.assertEqual(weather.place, 'Tampere Siilinkari')
+        self.assertEqual(weather.data.time.timestamp(), 1752591600)
+        self.assertEqual(weather.data.temperature.value, 26.3)
+        self.assertEqual(weather.data.wind_speed.value, 3.3)
 
 
 if __name__ == '__main__':
